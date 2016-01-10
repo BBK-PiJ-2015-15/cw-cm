@@ -43,4 +43,19 @@ public class ContactImplTest {
         assertEquals(contact.getName(), "name");
         assertEquals(contact.getNotes(), "");
     }
+    
+    @Test
+    public void retrievingAddedNotesShouldBeTheSame() {
+        Contact contact = new ContactImpl(1, "name");
+        assertEquals(contact.getId(), 1);
+        assertEquals(contact.getName(), "name");
+        assertEquals(contact.getNotes(), "");
+        
+        contact.addNotes("new note about contact");
+        assertEquals(contact.getNotes(), "new note about contact");
+        
+        contact.addNotes("append new note");
+        assertEquals(contact.getNotes(), "new note about contact\n" +
+            "append new note");
+    }
 }
