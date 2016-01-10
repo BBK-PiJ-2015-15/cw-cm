@@ -44,6 +44,19 @@ public class ContactImpl implements Contact {
         this.name = name;
         this.notes = notes;
     }
+    
+    /**
+     * Creates a new contact by passing the contact id and name.
+     *
+     * @param id The contact id.
+     * @param name The contact name.
+     * @throws IllegalArgumentException if the id invalid (less than or equal
+     *         to 0).
+     * @throws NullPointerException If the name is null.
+     */
+    public ContactImpl(int id, String name) {
+        this(id, name, "");
+    }
 
     /**
      * Gets the contact id.
