@@ -30,4 +30,17 @@ public class ContactImplTest {
     public void constructingWithNullNotesShouldThrow3() {
         Contact contact = new ContactImpl(1, "name", null);
     }
+    
+    @Test
+    public void retrievedIdNameAndOrNotesShouldBeTheSame() {
+        Contact contact = new ContactImpl(1, "name", "notes");
+        assertEquals(contact.getId(), 1);
+        assertEquals(contact.getName(), "name");
+        assertEquals(contact.getNotes(), "notes");
+        
+        contact = new ContactImpl(1, "name");
+        assertEquals(contact.getId(), 1);
+        assertEquals(contact.getName(), "name");
+        assertEquals(contact.getNotes(), "");
+    }
 }
