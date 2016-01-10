@@ -91,9 +91,15 @@ public class ContactImpl implements Contact {
     /**
      * Add notes about the contact. 
      *
+     * The note will be suffixed with an end of line character ('\n') if there's
+     * notes already stored.
+     *
      * @param note The notes to add.
      */
     public void addNotes(String note) {
-        // not implemented yet
+        if (!this.notes.equals(""))
+            this.notes += "\n";
+        
+        this.notes += note;
     }
 }
