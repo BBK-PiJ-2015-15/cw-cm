@@ -95,7 +95,7 @@ public class ContactImplTest {
         Contact contact = new ContactImpl(id, name, notes);
         
         contact.addNotes(extraNotes[0]);
-        assertEquals(contact.getNotes(), extraNotes[0]);
+        assertEquals(contact.getNotes(), notes + "\n" + extraNotes[0]);
         
         contact.addNotes(extraNotes[1]);
         assertEquals(contact.getNotes(), notes + "\n" + extraNotes[0] + "\n" +
