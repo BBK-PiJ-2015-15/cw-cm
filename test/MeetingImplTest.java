@@ -6,6 +6,12 @@ import org.junit.*;
  * Implementation of the MeetingImplTest test class.
  */
 public class MeetingImplTest {
+    private class MeetingMock extends MeetingImpl {
+        public MeetingMock(int id, Calendar date, Set<Contact> contacts) {
+            super(id, date, contacts);
+        }
+    }
+    
     private static Random random;
     
     private int id;
@@ -38,32 +44,32 @@ public class MeetingImplTest {
     
     @Test(expected=IllegalArgumentException.class)
     public void testNewMeetingWithNegativeIdShouldThrow() {
-        Meeting meeting = new MeetingImpl(-1, calendar, contacts);
+        Meeting meeting = new MeetingMock(-1, calendar, contacts);
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testNewMeetingWithZeroIdShouldThrow() {
-        Meeting meeting = new MeetingImpl(0, calendar, contacts);
+        Meeting meeting = new MeetingMock(0, calendar, contacts);
     }
     
     @Test(expected=NullPointerException.class)
     public void testNewMeetingWithNullCalendarShouldThrow() {
-        Meeting meeting = new MeetingImpl(id, null, contacts);
+        Meeting meeting = new MeetingMock(id, null, contacts);
     }
     
     @Test(expected=NullPointerException.class)
     public void testNewMeetingWithNullContactsShouldThrow() {
-        Meeting meeting = new MeetingImpl(id, calendar, null);
+        Meeting meeting = new MeetingMock(id, calendar, null);
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testNewMeetingWithEmptyContactsShouldThrow() {
-        Meeting meeting = new MeetingImpl(id, calendar, new HashSet<Contact>());
+        Meeting meeting = new MeetingMock(id, calendar, new HashSet<Contact>());
     }
     
     @Test
     public void testNewMeetingWithIdNameAndContacts() {
-        Meeting meeting = new MeetingImpl(id, calendar, contacts);
+        Meeting meeting = new MeetingMock(id, calendar, contacts);
         assertEquals(meeting.getId(), id);
         assertEquals(meeting.getDate(), calendar);
         assertEquals(meeting.getContacts(), contacts);
