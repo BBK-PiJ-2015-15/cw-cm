@@ -2,9 +2,9 @@ import java.util.Calendar;
 import java.util.Set;
 
 /**
- * A meeting that was held in the past.
+ * A meeting held in the past.
  *
- * It includes your notes about what happened and what was agreed.
+ * It includes notes about what happened and what was agreed.
  */
 public class PastMeetingImpl extends MeetingImpl implements PastMeeting {
     /**
@@ -12,6 +12,20 @@ public class PastMeetingImpl extends MeetingImpl implements PastMeeting {
      */
     private String notes;
 
+    /**
+     * Creates a meeting held in the past from the meeting id, date, a set of
+     * contacts and notes.
+     *
+     * @param id The meeting id.
+     * @param date The meeting date.
+     * @param contacts The set of contacts.
+     * @param notes The meeting notes.
+     * @throws IllegalArgumentException if the id is invalid (less than or equal
+     *         to 0).
+     * @throws NullPointerException If the date, the set of contacts or the
+     *         notes are null.
+     * @throws IllegalArgumentException If the set of contacts is empty.
+     */
     public PastMeetingImpl(int id, Calendar date, Set<Contact> contacts,
             String notes) {
         super(id, date, contacts);
