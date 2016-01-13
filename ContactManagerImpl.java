@@ -226,6 +226,10 @@ public class ContactManagerImpl implements ContactManager {
                     newContacts.add(contact);
             }
         }
+        
+        if (newContacts.isEmpty())
+            throw new IllegalArgumentException("no id provided or non existing contact");
+        
         return contacts;
     }
     
