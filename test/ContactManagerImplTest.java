@@ -31,4 +31,23 @@ public class ContactManagerImplTest {
         // should throw
         contactManager.addFutureMeeting(new HashSet<Contact>(), null);
     }
+    
+    @Test(expected=IllegalStateException.class)
+    public void testAddingPastMeetingWithNullContactsShouldThrow() {
+        // should throw
+        contactManager.addNewPastMeeting(null, Calendar.getInstance(), "");
+    }
+    
+    @Test(expected=IllegalStateException.class)
+    public void testAddingPastMeetingWithNullDateShouldThrow() {
+        // should throw
+        contactManager.addNewPastMeeting(new HashSet<Contact>(), null, "");
+    }
+    
+    @Test(expected=IllegalStateException.class)
+    public void testAddingPastMeetingWithNullNotesShouldThrow() {
+        // should throw
+        contactManager.addNewPastMeeting(new HashSet<Contact>(),
+            Calendar.getInstance(), null);
+    }
 }
