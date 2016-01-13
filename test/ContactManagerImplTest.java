@@ -90,4 +90,34 @@ public class ContactManagerImplTest {
         // should throw
         contactManager.getContacts(ids);
     }
+    
+        @Test
+    public void testAddingContact() {
+        // add contact
+        String name = "John Doe";
+        int id = contactManager.addNewContact(name, "a note");
+        assertTrue(id > 0);
+        
+        // contact must be in the set containing all contacts
+        Set<Contact> contacts = contactManager.getContacts("");
+        assertEquals(1, contacts.size());
+        
+        boolean found = false;
+        for (Contact contact : contacts) {
+            if (contact.getName().equals(name)) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue(found);
+        
+        // get contact by name
+        assertEquals(contacts, contactManager.getContacts(name));
+        
+        // get contact by partial string in name
+        assertEquals(contacts, contactManager.getContacts("Doe"));
+        
+        // get contact by id
+        assertEquals(contacts, contactManager.getContacts(id));
+    }
 }
