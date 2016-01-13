@@ -19,16 +19,4 @@ public class ContactManagerImplTest {
     public void setUp() {
         contactManager = new ContactManagerImpl();
     }
-    
-    @Test(expected=NullPointerException.class)
-    public void testAddingFutureMeetingWithNullContactsShouldThrow() {
-        // should throw
-        contactManager.addFutureMeeting(null, Calendar.getInstance());
-    }
-    
-    @Test(expected=NullPointerException.class)
-    public void testAddingFutureMeetingWithNullDateShouldThrow() {
-        // should throw
-        contactManager.addFutureMeeting(new HashSet<Contact>(), null);
-    }
 }
