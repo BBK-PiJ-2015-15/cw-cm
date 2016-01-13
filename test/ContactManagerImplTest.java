@@ -91,7 +91,7 @@ public class ContactManagerImplTest {
         contactManager.getContacts(ids);
     }
     
-        @Test
+    @Test
     public void testAddingContact() {
         // add contact
         String name = "John Doe";
@@ -119,5 +119,15 @@ public class ContactManagerImplTest {
         
         // get contact by id
         assertEquals(contacts, contactManager.getContacts(id));
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testGettingContactByIdWithoutIdsShouldThrow() {
+        contactManager.getContacts();
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testGettingContactByIdWithInvalidIdShouldThrow() {
+        contactManager.getContacts(1);
     }
 }
