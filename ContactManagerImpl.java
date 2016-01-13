@@ -177,6 +177,9 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if the parameter is null 
      */
     public Set<Contact> getContacts(String name) {
+        if (name == null)
+            throw new NullPointerException("name must not be null");
+    
         return null;
     }
     
@@ -190,6 +193,9 @@ public class ContactManagerImpl implements ContactManager {
     *         any of the provided IDs does not correspond to a real contact
     */
     public Set<Contact> getContacts(int... ids) {
+        if (ids == null)
+            throw new NullPointerException("ids must not be null");
+        
         return null;
     }
     
