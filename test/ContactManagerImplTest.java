@@ -17,6 +17,18 @@ public class ContactManagerImplTest {
     
     @Before
     public void setUp() {
-        contactManager = new ContactManagerImpl();
+        contactManager = mock(ContactManager.class);
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void testAddingFutureMeetingWithNullContactsShouldThrow() {
+        // should throw
+        contactManager.addFutureMeeting(null, Calendar.getInstance());
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void testAddingFutureMeetingWithNullDateShouldThrow() {
+        // should throw
+        contactManager.addFutureMeeting(new HashSet<Contact>(), null);
     }
 }
