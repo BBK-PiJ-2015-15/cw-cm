@@ -50,4 +50,16 @@ public class ContactManagerImplTest {
         contactManager.addNewPastMeeting(new HashSet<Contact>(),
             Calendar.getInstance(), null);
     }
+    
+    @Test(expected=NullPointerException.class)
+    public void testAddingNewContactWithNullNameShouldThrow() {
+        // should throw
+        contactManager.addNewContact(null, "");
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void testAddingNewContactWithNullNotesShouldThrow() {
+        // should throw
+        contactManager.addNewContact("John Doe", null);
+    }
 }
