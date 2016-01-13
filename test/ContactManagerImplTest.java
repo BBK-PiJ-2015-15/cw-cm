@@ -52,14 +52,30 @@ public class ContactManagerImplTest {
     }
     
     @Test(expected=NullPointerException.class)
-    public void testAddingNewContactWithNullNameShouldThrow() {
+    public void testAddingContactWithNullNameShouldThrow() {
         // should throw
         contactManager.addNewContact(null, "");
     }
     
     @Test(expected=NullPointerException.class)
-    public void testAddingNewContactWithNullNotesShouldThrow() {
+    public void testAddingContactWithNullNotesShouldThrow() {
         // should throw
         contactManager.addNewContact("John Doe", null);
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void testGettingContactsWithNullNameShouldThrow() {
+        String name = null;
+    
+        // should throw
+        contactManager.getContacts(name);
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void testGettingContactsWithNullIdsShouldThrow() {
+        int[] ids = null;
+        
+        // should throw
+        contactManager.getContacts(ids);
     }
 }
