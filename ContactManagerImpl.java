@@ -27,6 +27,9 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if the meeting or the date are null
      */
     public int addFutureMeeting(Set<Contact> contacts, Calendar date) {
+        if (contacts == null || date == null)
+            throw new NullPointerException("contacts or date must not be null");
+        
         return -1;
     }
     
