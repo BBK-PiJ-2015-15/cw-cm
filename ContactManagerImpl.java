@@ -128,8 +128,9 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if any of the
      */
     public void addNewPastMeeting(Set<Contact> contacts, Calendar date,
-        String notes) {
-    
+            String notes) {
+        if (contacts == null || date == null || notes == null)
+            throw new NullPointerException("contacts, date or notes must not be null");
     }
     
     /**
