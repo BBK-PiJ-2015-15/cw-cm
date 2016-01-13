@@ -63,13 +63,13 @@ public class ContactManagerImplTest {
         contactManager.addNewContact("John Doe", null);
     }
     
-    @Test(expected=NullPointerException.class)
+    @Test(expected=IllegalArgumentException.class)
     public void testAddingContactWithEmptyNameShouldThrow() {
         // should throw
         contactManager.addNewContact("", "a note");
     }
     
-    @Test(expected=NullPointerException.class)
+    @Test(expected=IllegalArgumentException.class)
     public void testAddingContactWithEmptyNotesShouldThrow() {
         // should throw
         contactManager.addNewContact("John Doe", "");
