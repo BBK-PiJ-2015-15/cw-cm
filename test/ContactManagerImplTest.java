@@ -17,7 +17,7 @@ public class ContactManagerImplTest {
     
     @Before
     public void setUp() {
-        contactManager = mock(ContactManager.class);
+        contactManager = new ContactManagerImpl();
     }
     
     @Test(expected=NullPointerException.class)
