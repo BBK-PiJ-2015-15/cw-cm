@@ -1,18 +1,26 @@
-import java.util.Calendar;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A class to manage your contacts and meetings.
  */
 public class ContactManagerImpl implements ContactManager {
     /**
+     * The next contact id.
+     */
+    private int nextContactId = 1;
+
+    /**
+     * The set of contacts.
+     */
+    private HashSet<Contact> contacts = new HashSet<Contact>();
+
+    /**
      * Creates a new contact manager.
      */
     public ContactManagerImpl() {
     
     }
-
+    
     /**
      * Add a new meeting to be held in the future.
      *
@@ -161,12 +169,11 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if the name or the notes are null 
      */
     public int addNewContact(String name, String notes) {
-        if (name == null || notes == null)
-            throw new NullPointerException("name or notes must not be null");
-        else if (name.isEmpty() || notes.isEmpty())
+        if (name.isEmpty() || notes.isEmpty())
             throw new IllegalArgumentException("name or notes must not be empty");
         
-        return -1;
+        contacts.add(new ContactImpl(nextContactId, name, notes));
+        return nextContactId++;
     }
     
     /**
@@ -183,7 +190,19 @@ public class ContactManagerImpl implements ContactManager {
         if (name == null)
             throw new NullPointerException("name must not be null");
     
-        return null;
+        Set<Contact> newContacts = new HashSet<Contact>();
+        if (name.isEmpty()) {
+            newContacts.addAll(contacts);
+        } else {
+            name = name.toLowerCase();
+            newContacts = new HashSet<Contact>();
+            
+            for (Contact contact : contacts) {
+                if (contact.getName().toLowerCase().contains(name))
+                    newContacts.add(contact);
+            }
+        }
+        return contacts;
     }
     
     /**
@@ -199,7 +218,15 @@ public class ContactManagerImpl implements ContactManager {
         if (ids == null)
             throw new NullPointerException("ids must not be null");
         
-        return null;
+        Set<Contact> newContacts = new HashSet<Contact>();
+        
+        for (int id : ids) {
+            for (Contact contact : contacts) {
+                if (contact.getId() == id)
+                    newContacts.add(contact);
+            }
+        }
+        return contacts;
     }
     
     /**
