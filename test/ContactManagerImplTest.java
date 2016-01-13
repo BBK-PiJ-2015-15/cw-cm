@@ -54,13 +54,25 @@ public class ContactManagerImplTest {
     @Test(expected=NullPointerException.class)
     public void testAddingContactWithNullNameShouldThrow() {
         // should throw
-        contactManager.addNewContact(null, "");
+        contactManager.addNewContact(null, "a note");
     }
     
     @Test(expected=NullPointerException.class)
     public void testAddingContactWithNullNotesShouldThrow() {
         // should throw
         contactManager.addNewContact("John Doe", null);
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void testAddingContactWithEmptyNameShouldThrow() {
+        // should throw
+        contactManager.addNewContact("", "a note");
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void testAddingContactWithEmptyNotesShouldThrow() {
+        // should throw
+        contactManager.addNewContact("John Doe", "");
     }
     
     @Test(expected=NullPointerException.class)
