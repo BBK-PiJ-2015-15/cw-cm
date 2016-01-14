@@ -95,9 +95,14 @@ public class ContactManagerImpl implements ContactManager {
      *         happening in the past
      */
     public FutureMeeting getFutureMeeting(int id) {
-        // TODO: throw IllegalArgumentException if there is a meeting with that
-        // ID happening in the past
-        return futureMeetings.get(id);
+        FutureMeeting futureMeeting = futureMeetings.get(id);
+        
+        // if not found, make sure it's not in the past meeting map
+        if (futureMeeting == null && pastMeetings.get(id) != null) {
+            throw new IllegalArgumentException(
+                "meeting id must not be of meeting held in the past");
+        }
+        return futureMeeting;
     }
     
     /**
@@ -158,7 +163,13 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if the contact is null
      */
     public List<PastMeeting> getPastMeetingListFor(Contact contact) {
-        return null;
+        LinkedList<PastMeeting> list = new LinkedList<>();
+    
+        for (PastMeeting pastMeeting : pastMeetings.values()) {
+            if (pastMeeting.getContacts().contains(contact))
+                list.add(pastMeeting);
+        }
+        return list;
     }
     
     /**
