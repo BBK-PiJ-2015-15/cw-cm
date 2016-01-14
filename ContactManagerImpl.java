@@ -50,7 +50,7 @@ public class ContactManagerImpl implements ContactManager {
         } else if (!this.contacts.containsAll(contacts)) {
             throw new IllegalArgumentException(
                 "contacts must not be unknown or non-existent");
-        } else if (date.before(Calendar.getInstance())) {
+        } else if (date.compareTo(Calendar.getInstance()) < 0) {
             throw new IllegalArgumentException(
                 "date must be set for a time in the future");
         }
@@ -171,6 +171,12 @@ public class ContactManagerImpl implements ContactManager {
         if (contacts == null || date == null || notes == null) {
             throw new NullPointerException(
                 "contacts, date or notes must not be null");
+        } else if (!this.contacts.containsAll(contacts)) {
+            throw new IllegalArgumentException(
+                "contacts must not be unknown or non-existent");
+        } else if (date.compareTo(Calendar.getInstance()) >= 0) {
+            throw new IllegalArgumentException(
+                "date must be set for a time in the past");
         }
     }
     
