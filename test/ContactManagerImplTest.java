@@ -11,9 +11,34 @@ import static org.mockito.Mockito.*;
  */
 public class ContactManagerImplTest {
     /**
+     * The present date.
+     */
+    private Calendar presentDate;
+    
+    /**
+     * A date in the future.
+     */
+    private Calendar futureDate;
+
+    /**
+     * A date in the past.
+     */
+    private Calendar pastDate;
+
+    /**
      * The contact manager.
      */
     private ContactManager contactManager;
+    
+    public ContactManagerImplTest() {
+        presentDate = Calendar.getInstance();
+        
+        futureDate = Calendar.getInstance();
+        futureDate.add(Calendar.DATE, 1);
+        
+        pastDate = Calendar.getInstance();
+        pastDate.add(Calendar.DATE, -1);
+    }
     
     @Before
     public void setUp() {
@@ -35,15 +60,13 @@ public class ContactManagerImplTest {
         // get all contacts
         Set<Contact> contacts = contactManager.getContacts("");
         
-        // should throw
         contactManager.addFutureMeeting(contacts, null);
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testAddingFutureMeetingWithEmptyContactsShouldThrow() {
-        // should throw
         contactManager.addFutureMeeting(new HashSet<Contact>(),
-            Calendar.getInstance());
+            futureDate);
     }
     
     @Test(expected=IllegalArgumentException.class)
@@ -55,8 +78,7 @@ public class ContactManagerImplTest {
         Set<Contact> contacts = new HashSet<Contact>();
         contacts.add(contact);
         
-        // should throw
-        contactManager.addFutureMeeting(contacts, Calendar.getInstance());
+        contactManager.addFutureMeeting(contacts, futureDate);
     }
     
     @Test(expected=IllegalArgumentException.class)
@@ -68,12 +90,7 @@ public class ContactManagerImplTest {
         Set<Contact> contacts = contactManager.getContacts("");
         assertEquals(1, contacts.size());
         
-        // create a date one day in the past
-        Calendar date = Calendar.getInstance();
-        date.add(Calendar.DATE, -1);
-        
-        // should throw
-        contactManager.addFutureMeeting(contacts, date);
+        contactManager.addFutureMeeting(contacts, pastDate);
     }
     
     @Test
@@ -88,25 +105,21 @@ public class ContactManagerImplTest {
         Set<Contact> contacts = contactManager.getContacts("Doe");
         assertEquals(2, contacts.size());
         
-        // create a date one day in the future
-        Calendar date = Calendar.getInstance();
-        date.add(Calendar.DATE, 1);
-        
         // add future meeting for contacts with surname Doe
-        int id = contactManager.addFutureMeeting(contacts, date);
+        int id = contactManager.addFutureMeeting(contacts, futureDate);
         
         // get added future meeting
         FutureMeeting futureMeeting = contactManager.getFutureMeeting(id);
         assertNotNull(futureMeeting);
         assertEquals(futureMeeting.getId(), id);
-        assertEquals(futureMeeting.getDate(), date);
+        assertEquals(futureMeeting.getDate(), futureDate);
         assertTrue(contacts.containsAll(futureMeeting.getContacts()));
         
         // get added future meeting using generic method
         Meeting meeting = contactManager.getMeeting(id);
         assertNotNull(meeting);
         assertEquals(meeting.getId(), id);
-        assertEquals(meeting.getDate(), date);
+        assertEquals(meeting.getDate(), futureDate);
         assertTrue(contacts.containsAll(meeting.getContacts()));
     }
     
@@ -114,21 +127,49 @@ public class ContactManagerImplTest {
     
     @Test(expected=NullPointerException.class)
     public void testAddingPastMeetingWithNullContactsShouldThrow() {
-        // should throw
-        contactManager.addNewPastMeeting(null, Calendar.getInstance(), "");
+        contactManager.addNewPastMeeting(null, pastDate, "meeting notes");
     }
     
     @Test(expected=NullPointerException.class)
     public void testAddingPastMeetingWithNullDateShouldThrow() {
-        // should throw
-        contactManager.addNewPastMeeting(new HashSet<Contact>(), null, "");
+        contactManager.addNewPastMeeting(new HashSet<Contact>(), null,
+            "meeting notes");
     }
     
     @Test(expected=NullPointerException.class)
     public void testAddingPastMeetingWithNullNotesShouldThrow() {
-        // should throw
         contactManager.addNewPastMeeting(new HashSet<Contact>(),
-            Calendar.getInstance(), null);
+            pastDate, null);
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testAddingPastMeetingWithEmptyContactsShouldThrow() {
+        contactManager.addNewPastMeeting(new HashSet<Contact>(),
+            pastDate, "meeting notes");
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testAddingPastMeetingWithUnknownContactShouldThrow() {
+        // create a mock contact
+        Contact contact = mock(Contact.class);
+        
+        // create set of contacts
+        Set<Contact> contacts = new HashSet<Contact>();
+        contacts.add(contact);
+        
+        contactManager.addNewPastMeeting(contacts, pastDate, "meeting notes");
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testAddingPastMeetingWithFutureDateShouldThrow() {
+        // add a contact
+        contactManager.addNewContact("John Doe", "a note");
+        
+        // get all contacts
+        Set<Contact> contacts = contactManager.getContacts("");
+        assertEquals(1, contacts.size());
+        
+        contactManager.addNewPastMeeting(contacts, futureDate, "meeting notes");
     }
     
     // contact tests
