@@ -40,6 +40,27 @@ public class ContactManagerImplTest {
     }
     
     @Test(expected=IllegalArgumentException.class)
+    public void testAddingFutureMeetingWithEmptyContactsShouldThrow() {
+        // should throw
+        contactManager.addFutureMeeting(new HashSet<Contact>(),
+            Calendar.getInstance());
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testAddingFutureMeetingWithUnknownContactShouldThrow() {
+        // create a mock contact
+        Contact contact = mock(Contact.class);
+        when(contact.getId()).thenReturn(1);
+        
+        // create set of contacts
+        Set<Contact> contacts = new HashSet<Contact>();
+        contacts.add(contact);
+        
+        // should throw
+        contactManager.addFutureMeeting(contacts, Calendar.getInstance());
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
     public void testAddingFutureMeetingWithPastDateShouldThrow() {
         // add a contact
         contactManager.addNewContact("John Doe", "a note");
