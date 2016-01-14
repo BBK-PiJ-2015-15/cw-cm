@@ -195,7 +195,6 @@ public class ContactManagerImpl implements ContactManager {
             newContacts.addAll(contacts);
         } else {
             name = name.toLowerCase();
-            newContacts = new HashSet<Contact>();
             
             for (Contact contact : contacts) {
                 if (contact.getName().toLowerCase().contains(name))
