@@ -25,6 +25,11 @@ public class ContactManagerImpl implements ContactManager {
     private TreeMap<Integer, FutureMeeting> futureMeetings = new TreeMap<>();
     
     /**
+     * The map of past meetings.
+     */
+    private TreeMap<Integer, PastMeeting> pastMeetings = new TreeMap<>();
+    
+    /**
      * Constructs a new contact manager.
      */
     public ContactManagerImpl() {
@@ -178,6 +183,16 @@ public class ContactManagerImpl implements ContactManager {
             throw new IllegalArgumentException(
                 "date must be set for a time in the past");
         }
+        
+        // create past meeting
+        PastMeeting pastMeeting = new PastMeetingImpl(nextMeetingId, date,
+            contacts, notes);
+        
+        // add meeting to map
+        pastMeetings.put(nextMeetingId, pastMeeting);
+        
+        // increment next meeting ID
+        nextMeetingId++;
     }
     
     /**
