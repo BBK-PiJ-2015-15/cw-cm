@@ -90,10 +90,7 @@ public class ContactManagerImpl implements ContactManager {
      *         happening in the past
      */
     public FutureMeeting getFutureMeeting(int id) {
-        
-        
-        
-        return null;
+        return futureMeetings.get(id);
     }
     
     /**
