@@ -198,6 +198,29 @@ public class ContactManagerImplTest {
         contactManager.addNewPastMeeting(contacts, pastDate, "meeting notes");
     }
     
+    @Test(expected=IllegalArgumentException.class)
+    public void testGettingPastMeetingFromFutureMeetingMapShouldThrow() {
+        // add contact
+        contactManager.addNewContact("John Doe", "a note");
+        assertEquals(1, contactManager.getContacts("").size());
+        
+        // get all contacts
+        Set<Contact> contacts = contactManager.getContacts("");
+        assertEquals(1, contacts.size());
+        
+        // add past meeting
+        contactManager.addNewPastMeeting(contacts, pastDate, "meeting notes");
+        
+        // get past meeting list for contact
+        Contact contact = (Contact)contacts.toArray()[0];
+        List<PastMeeting> pastMeetings = contactManager.getPastMeetingListFor(
+            contact);
+        assertEquals(1, pastMeetings.size());
+        
+        for (PastMeeting pastMeeting : pastMeetings)
+            contactManager.getFutureMeeting(pastMeeting.getId());
+    }
+    
     // contact tests
     
     @Test(expected=NullPointerException.class)
