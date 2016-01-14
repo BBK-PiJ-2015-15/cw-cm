@@ -75,6 +75,21 @@ public class ContactManagerImplTest {
         contactManager.addFutureMeeting(contacts, date);
     }
     
+    @Test
+    public void testAddingFutureMeeting() {
+        // add a contact
+        contactManager.addNewContact("John Doe", "a note");
+        
+        // get all contacts
+        Set<Contact> contacts = contactManager.getContacts("");
+        
+        // create a date one day in the future
+        Calendar date = Calendar.getInstance();
+        date.add(Calendar.DATE, 1);
+        
+        contactManager.addFutureMeeting(contacts, date);
+    }
+    
     // past meeting tests
     
     @Test(expected=NullPointerException.class)
