@@ -8,12 +8,22 @@ public class ContactManagerImpl implements ContactManager {
      * The next contact ID.
      */
     private int nextContactId = 1;
+    
+    /**
+     * The next meeting ID.
+     */
+    private int nextMeetingId = 1;
 
     /**
      * The set of contacts.
      */
     private HashSet<Contact> contacts = new HashSet<Contact>();
-
+    
+    /**
+     * The set of future meetings.
+     */
+    private HashSet<Meeting> futureMeetings = new HashSet<Meeting>();
+    
     /**
      * Constructs a new contact manager.
      */
@@ -35,10 +45,20 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if the contacts or date are null
      */
     public int addFutureMeeting(Set<Contact> contacts, Calendar date) {
-        if (contacts == null || date == null)
+        if (contacts == null || date == null) {
             throw new NullPointerException("contacts or date must not be null");
+        } else if (!this.contacts.containsAll(contacts)) {
+            throw new IllegalArgumentException(
+                "contacts must not be unknown or non-existent");
+        } else if (date.before(Calendar.getInstance())) {
+            throw new IllegalArgumentException(
+                "date must be set for a time in the future");
+        }
         
-        return -1;
+        futureMeetings.add(new FutureMeetingImpl(nextMeetingId, date,
+            contacts));
+        
+        return nextMeetingId++;
     }
     
     /**
@@ -180,6 +200,7 @@ public class ContactManagerImpl implements ContactManager {
         }
         
         contacts.add(new ContactImpl(nextContactId, name, notes));
+        
         return nextContactId++;
     }
     
