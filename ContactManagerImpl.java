@@ -20,9 +20,9 @@ public class ContactManagerImpl implements ContactManager {
     private HashSet<Contact> contacts = new HashSet<Contact>();
     
     /**
-     * The set of future meetings.
+     * The map of future meetings.
      */
-    private HashSet<Meeting> futureMeetings = new HashSet<Meeting>();
+    private TreeMap<Integer, FutureMeeting> futureMeetings = new TreeMap<>();
     
     /**
      * Constructs a new contact manager.
@@ -55,9 +55,14 @@ public class ContactManagerImpl implements ContactManager {
                 "date must be set for a time in the future");
         }
         
-        futureMeetings.add(new FutureMeetingImpl(nextMeetingId, date,
-            contacts));
+        // create future meeting
+        FutureMeeting futureMeeting = new FutureMeetingImpl(nextMeetingId, date,
+            contacts);
         
+        // add meeting to map
+        futureMeetings.put(nextMeetingId, futureMeeting);
+        
+        // increment next meeting ID
         return nextMeetingId++;
     }
     
@@ -80,11 +85,14 @@ public class ContactManagerImpl implements ContactManager {
      * none.
      *
      * @param id the meeting ID
-     * @return the meeting with the specified ID, or null if there is none
+     * @return the meeting with the specified ID or null if there is none
      * @throws IllegalArgumentException if there is a meeting with that ID
      *         happening in the past
      */
     public FutureMeeting getFutureMeeting(int id) {
+        
+        
+        
         return null;
     }
     
