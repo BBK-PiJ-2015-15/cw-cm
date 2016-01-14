@@ -66,6 +66,7 @@ public class ContactManagerImplTest {
         
         // get all contacts
         Set<Contact> contacts = contactManager.getContacts("");
+        assertEquals(1, contacts.size());
         
         // create a date one day in the past
         Calendar date = Calendar.getInstance();
@@ -77,17 +78,29 @@ public class ContactManagerImplTest {
     
     @Test
     public void testAddingFutureMeeting() {
-        // add a contact
+        // add contacts
         contactManager.addNewContact("John Doe", "a note");
+        contactManager.addNewContact("Jane Doe", "another note");
+        contactManager.addNewContact("James Bond", "vodka martini");
+        assertEquals(3, contactManager.getContacts("").size());
         
-        // get all contacts
-        Set<Contact> contacts = contactManager.getContacts("");
+        // get all contacts with surname Doe
+        Set<Contact> contacts = contactManager.getContacts("Doe");
+        assertEquals(2, contacts.size());
         
         // create a date one day in the future
         Calendar date = Calendar.getInstance();
         date.add(Calendar.DATE, 1);
         
-        contactManager.addFutureMeeting(contacts, date);
+        // add future meeting for contacts with surname Doe
+        int id = contactManager.addFutureMeeting(contacts, date);
+        
+        // get added future meeting
+        FutureMeeting meeting = contactManager.getFutureMeeting(id);
+        assertNotNull(meeting);
+        assertEquals(meeting.getId(), id);
+        assertEquals(meeting.getDate(), date);
+        assertTrue(contacts.containsAll(meeting.getContacts()));
     }
     
     // past meeting tests
