@@ -50,7 +50,6 @@ public class ContactManagerImplTest {
     public void testAddingFutureMeetingWithUnknownContactShouldThrow() {
         // create a mock contact
         Contact contact = mock(Contact.class);
-        when(contact.getId()).thenReturn(1);
         
         // create set of contacts
         Set<Contact> contacts = new HashSet<Contact>();
@@ -69,11 +68,11 @@ public class ContactManagerImplTest {
         Set<Contact> contacts = contactManager.getContacts("");
         
         // create a date one day in the past
-        Calendar pastDate = Calendar.getInstance();
-        pastDate.add(Calendar.DATE, -1);
+        Calendar date = Calendar.getInstance();
+        date.add(Calendar.DATE, -1);
         
         // should throw
-        contactManager.addFutureMeeting(contacts, pastDate);
+        contactManager.addFutureMeeting(contacts, date);
     }
     
     // past meeting tests
