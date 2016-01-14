@@ -90,6 +90,8 @@ public class ContactManagerImpl implements ContactManager {
      *         happening in the past
      */
     public FutureMeeting getFutureMeeting(int id) {
+        // TODO: throw IllegalArgumentException if there is a meeting with that
+        // ID happening in the past
         return futureMeetings.get(id);
     }
     
@@ -100,7 +102,10 @@ public class ContactManagerImpl implements ContactManager {
      * @return the meeting with the requested ID or null if there is none
      */
     public Meeting getMeeting(int id) {
-        return null;
+        Meeting meeting = futureMeetings.get(id);
+        
+    
+        return meeting;
     }
     
     /**
