@@ -20,17 +20,38 @@ public class ContactManagerImplTest {
         contactManager = new ContactManagerImpl();
     }
     
+    // future meeting tests
+    
     @Test(expected=NullPointerException.class)
     public void testAddingFutureMeetingWithNullContactsShouldThrow() {
-        // should throw
         contactManager.addFutureMeeting(null, Calendar.getInstance());
     }
     
     @Test(expected=NullPointerException.class)
     public void testAddingFutureMeetingWithNullDateShouldThrow() {
+        // create a set with one contact
+        Set<Contact> contacts = new HashSet<Contact>(
+            Arrays.asList(addContact("John Doe", "a note")));
+        
         // should throw
-        contactManager.addFutureMeeting(new HashSet<Contact>(), null);
+        contactManager.addFutureMeeting(contacts, null);
     }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testAddingFutureMeetingWithPastDateShouldThrow() {
+        // create a set with one contact
+        Set<Contact> contacts = new HashSet<Contact>(
+            Arrays.asList(addContact("John Doe", "a note")));
+        
+        // create a date one day in the past
+        Calendar pastDate = Calendar.getInstance();
+        pastDate.add(Calendar.DATE, -1);
+        
+        // should throw
+        contactManager.addFutureMeeting(contacts, pastDate);
+    }
+    
+    // past meeting tests
     
     @Test(expected=NullPointerException.class)
     public void testAddingPastMeetingWithNullContactsShouldThrow() {
@@ -50,6 +71,8 @@ public class ContactManagerImplTest {
         contactManager.addNewPastMeeting(new HashSet<Contact>(),
             Calendar.getInstance(), null);
     }
+    
+    // contact tests
     
     @Test(expected=NullPointerException.class)
     public void testAddingContactWithNullNameShouldThrow() {
@@ -127,7 +150,20 @@ public class ContactManagerImplTest {
     }
     
     @Test(expected=IllegalArgumentException.class)
-    public void testGettingContactByIdWithInvalidIdShouldThrow() {
+    public void testGettingContactByIdWithNonExistingIdShouldThrow() {
         contactManager.getContacts(1);
+    }
+    
+    // helper methods
+    private Contact addContact(String name, String notes) {
+        // add contact
+        int id = contactManager.addNewContact(name, notes);
+    
+        // mock contact class
+        Contact contact = mock(Contact.class);
+        when(contact.getId()).thenReturn(id);
+        when(contact.getName()).thenReturn(name);
+        when(contact.getNotes()).thenReturn(notes);
+        return contact;
     }
 }
