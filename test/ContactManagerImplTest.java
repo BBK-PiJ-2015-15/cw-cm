@@ -29,9 +29,11 @@ public class ContactManagerImplTest {
     
     @Test(expected=NullPointerException.class)
     public void testAddingFutureMeetingWithNullDateShouldThrow() {
-        // create a set with one contact
-        Set<Contact> contacts = new HashSet<Contact>(
-            Arrays.asList(addContact("John Doe", "a note")));
+        // add a contact
+        contactManager.addNewContact("John Doe", "a note");
+        
+        // get all contacts
+        Set<Contact> contacts = contactManager.getContacts("");
         
         // should throw
         contactManager.addFutureMeeting(contacts, null);
@@ -39,9 +41,11 @@ public class ContactManagerImplTest {
     
     @Test(expected=IllegalArgumentException.class)
     public void testAddingFutureMeetingWithPastDateShouldThrow() {
-        // create a set with one contact
-        Set<Contact> contacts = new HashSet<Contact>(
-            Arrays.asList(addContact("John Doe", "a note")));
+        // add a contact
+        contactManager.addNewContact("John Doe", "a note");
+        
+        // get all contacts
+        Set<Contact> contacts = contactManager.getContacts("");
         
         // create a date one day in the past
         Calendar pastDate = Calendar.getInstance();
@@ -152,18 +156,5 @@ public class ContactManagerImplTest {
     @Test(expected=IllegalArgumentException.class)
     public void testGettingContactByIdWithNonExistingIdShouldThrow() {
         contactManager.getContacts(1);
-    }
-    
-    // helper methods
-    private Contact addContact(String name, String notes) {
-        // add contact
-        int id = contactManager.addNewContact(name, notes);
-    
-        // mock contact class
-        Contact contact = mock(Contact.class);
-        when(contact.getId()).thenReturn(id);
-        when(contact.getName()).thenReturn(name);
-        when(contact.getNotes()).thenReturn(notes);
-        return contact;
     }
 }
