@@ -96,7 +96,14 @@ public class ContactManagerImplTest {
         int id = contactManager.addFutureMeeting(contacts, date);
         
         // get added future meeting
-        FutureMeeting meeting = contactManager.getFutureMeeting(id);
+        FutureMeeting futureMeeting = contactManager.getFutureMeeting(id);
+        assertNotNull(futureMeeting);
+        assertEquals(futureMeeting.getId(), id);
+        assertEquals(futureMeeting.getDate(), date);
+        assertTrue(contacts.containsAll(futureMeeting.getContacts()));
+        
+        // get added future meeting using generic method
+        Meeting meeting = contactManager.getMeeting(id);
         assertNotNull(meeting);
         assertEquals(meeting.getId(), id);
         assertEquals(meeting.getDate(), date);
