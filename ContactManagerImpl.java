@@ -229,7 +229,7 @@ public class ContactManagerImpl implements ContactManager {
                     newContacts.add(contact);
             }
         }
-        return contacts;
+        return newContacts;
     }
     
     /**
