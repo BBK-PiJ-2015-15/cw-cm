@@ -28,7 +28,7 @@ public class ContactManagerImplTest {
     /**
      * The contact manager.
      */
-    private ContactManager contactManager;
+    private ContactManagerImpl contactManager;
     
     public ContactManagerImplTest() {
         presentDate = Calendar.getInstance();
@@ -49,7 +49,7 @@ public class ContactManagerImplTest {
     
     @Test(expected=NullPointerException.class)
     public void testAddingFutureMeetingWithNullContactsShouldThrow() {
-        contactManager.addFutureMeeting(null, Calendar.getInstance());
+        contactManager.addFutureMeeting(null, futureDate);
     }
     
     @Test(expected=NullPointerException.class)
@@ -65,8 +65,7 @@ public class ContactManagerImplTest {
     
     @Test(expected=IllegalArgumentException.class)
     public void testAddingFutureMeetingWithEmptyContactsShouldThrow() {
-        contactManager.addFutureMeeting(new HashSet<Contact>(),
-            futureDate);
+        contactManager.addFutureMeeting(new HashSet<Contact>(), futureDate);
     }
     
     @Test(expected=IllegalArgumentException.class)
@@ -88,7 +87,6 @@ public class ContactManagerImplTest {
         
         // get all contacts
         Set<Contact> contacts = contactManager.getContacts("");
-        assertEquals(1, contacts.size());
         
         contactManager.addFutureMeeting(contacts, pastDate);
     }
@@ -99,28 +97,20 @@ public class ContactManagerImplTest {
         contactManager.addNewContact("John Doe", "a note");
         contactManager.addNewContact("Jane Doe", "another note");
         contactManager.addNewContact("James Bond", "vodka martini");
-        assertEquals(3, contactManager.getContacts("").size());
         
-        // get all contacts with surname Doe
-        Set<Contact> contacts = contactManager.getContacts("Doe");
-        assertEquals(2, contacts.size());
+        // get all contacts
+        Set<Contact> contacts = contactManager.getContacts("");
         
-        // add future meeting for contacts with surname Doe
+        // add future meeting
         int id = contactManager.addFutureMeeting(contacts, futureDate);
         
-        // get added future meeting
+        // assert getting added future meeting returns correct meeting
         FutureMeeting futureMeeting = contactManager.getFutureMeeting(id);
-        assertNotNull(futureMeeting);
-        assertEquals(futureMeeting.getId(), id);
-        assertEquals(futureMeeting.getDate(), futureDate);
-        assertTrue(contacts.containsAll(futureMeeting.getContacts()));
+        assertFutureMeetingEquals(futureMeeting, id, futureDate, contacts);
         
-        // get added future meeting using generic method
-        Meeting meeting = contactManager.getMeeting(id);
-        assertNotNull(meeting);
-        assertEquals(meeting.getId(), id);
-        assertEquals(meeting.getDate(), futureDate);
-        assertTrue(contacts.containsAll(meeting.getContacts()));
+        // assert getting added future meeting using generic method returns
+        // correct meeting
+        assertEquals(futureMeeting, contactManager.getMeeting(id));
     }
     
     // past meeting tests
@@ -154,8 +144,8 @@ public class ContactManagerImplTest {
     
     @Test(expected=IllegalArgumentException.class)
     public void testAddingPastMeetingWithEmptyContactsShouldThrow() {
-        contactManager.addNewPastMeeting(new HashSet<Contact>(),
-            pastDate, "meeting notes");
+        contactManager.addNewPastMeeting(new HashSet<Contact>(), pastDate,
+            "meeting notes");
     }
     
     @Test(expected=IllegalArgumentException.class)
@@ -188,25 +178,33 @@ public class ContactManagerImplTest {
         contactManager.addNewContact("John Doe", "a note");
         contactManager.addNewContact("Jane Doe", "another note");
         contactManager.addNewContact("James Bond", "vodka martini");
-        assertEquals(3, contactManager.getContacts("").size());
         
-        // get all contacts with surname Doe
-        Set<Contact> contacts = contactManager.getContacts("Doe");
-        assertEquals(2, contacts.size());
+        // get all contacts
+        Set<Contact> contacts = contactManager.getContacts("");
+        String notes = "meeting notes";
         
-        // add past meeting for contacts with surname Doe
-        contactManager.addNewPastMeeting(contacts, pastDate, "meeting notes");
+        contactManager.addNewPastMeeting(contacts, pastDate, notes);
+        
+        // assert last insert ID is valid
+        int id = contactManager.getLastId();
+        assertTrue(id > 0);
+        
+        // assert getting added past meeting returns correct meeting
+        PastMeeting pastMeeting = contactManager.getPastMeeting(id);
+        assertPastMeetingEquals(pastMeeting, pastDate, contacts, notes);
+        
+        // assert getting added past meeting using generic method returns
+        // correct meeting
+        assertEquals(pastMeeting, contactManager.getMeeting(id));
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testGettingPastMeetingFromFutureMeetingMapShouldThrow() {
         // add contact
         contactManager.addNewContact("John Doe", "a note");
-        assertEquals(1, contactManager.getContacts("").size());
         
         // get all contacts
         Set<Contact> contacts = contactManager.getContacts("");
-        assertEquals(1, contacts.size());
         
         // add past meeting
         contactManager.addNewPastMeeting(contacts, pastDate, "meeting notes");
@@ -231,36 +229,39 @@ public class ContactManagerImplTest {
     
     @Test(expected=NullPointerException.class)
     public void testAddingContactWithNullNotesShouldThrow() {
-        // should throw
         contactManager.addNewContact("John Doe", null);
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testAddingContactWithEmptyNameShouldThrow() {
-        // should throw
         contactManager.addNewContact("", "a note");
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testAddingContactWithEmptyNotesShouldThrow() {
-        // should throw
         contactManager.addNewContact("John Doe", "");
     }
     
     @Test(expected=NullPointerException.class)
-    public void testGettingContactsWithNullNameShouldThrow() {
+    public void testGettingContactsByNameWithNullNameShouldThrow() {
         String name = null;
-    
-        // should throw
         contactManager.getContacts(name);
     }
     
     @Test(expected=NullPointerException.class)
-    public void testGettingContactsWithNullIdsShouldThrow() {
+    public void testGettingContactsByIdWithNullIdsShouldThrow() {
         int[] ids = null;
-        
-        // should throw
         contactManager.getContacts(ids);
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testGettingContactByIdWithoutIdsShouldThrow() {
+        contactManager.getContacts();
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testGettingContactByIdWithNonExistingIdShouldThrow() {
+        contactManager.getContacts(1);
     }
     
     @Test
@@ -293,13 +294,29 @@ public class ContactManagerImplTest {
         assertEquals(contacts, contactManager.getContacts(id));
     }
     
-    @Test(expected=IllegalArgumentException.class)
-    public void testGettingContactByIdWithoutIdsShouldThrow() {
-        contactManager.getContacts();
+    // helper methods
+    
+    public void assertPastMeetingEquals(Meeting pastMeeting, Calendar date,
+            Set<Contact> contacts, String notes) {
+        assertTrue(pastMeeting instanceof PastMeeting);
+        assertEquals(date, pastMeeting.getDate());
+        assertEquals(contacts, pastMeeting.getContacts());
+        assertEquals(notes, ((PastMeeting)pastMeeting).getNotes());
     }
     
-    @Test(expected=IllegalArgumentException.class)
-    public void testGettingContactByIdWithNonExistingIdShouldThrow() {
-        contactManager.getContacts(1);
+    public void assertFutureMeetingEquals(Meeting futureMeeting, int id,
+            Calendar date, Set<Contact> contacts) {
+        assertTrue(futureMeeting instanceof FutureMeeting);
+        assertEquals(id, futureMeeting.getId());
+        assertEquals(date, futureMeeting.getDate());
+        assertEquals(contacts, futureMeeting.getContacts());
+    }
+    
+    public void assertFutureMeetingEquals(Meeting futureMeeting, Calendar date,
+            Set<Contact> contacts) {
+        assertTrue(futureMeeting instanceof FutureMeeting);
+        assertTrue(futureMeeting.getId() > 0);
+        assertEquals(date, futureMeeting.getDate());
+        assertEquals(contacts, futureMeeting.getContacts());
     }
 }
