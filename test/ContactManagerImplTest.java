@@ -186,7 +186,7 @@ public class ContactManagerImplTest {
         contactManager.addNewPastMeeting(contacts, pastDate, notes);
         
         // assert last insert ID is valid
-        int id = contactManager.getLastId();
+        int id = contactManager.getLastMeetingId();
         assertTrue(id > 0);
         
         // assert getting added past meeting returns correct meeting

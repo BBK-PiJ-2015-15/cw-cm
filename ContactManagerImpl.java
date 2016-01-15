@@ -37,6 +37,15 @@ public class ContactManagerImpl implements ContactManager {
     }
     
     /**
+     * Returns the ID of the last added meeting.
+     *
+     * @return the last added meeting ID
+     */
+    public int getLastMeetingId() {
+        return (nextMeetingId - 1);
+    }
+    
+    /**
      * Adds a meeting to be held in the future.
      *
      * An ID is returned when the meeting is added to the system. This ID will
@@ -82,7 +91,7 @@ public class ContactManagerImpl implements ContactManager {
      *         happening in the future
      */
     public PastMeeting getPastMeeting(int id) {
-        return null;
+        return pastMeetings.get(id);
     }
     
     /**
@@ -113,8 +122,8 @@ public class ContactManagerImpl implements ContactManager {
      */
     public Meeting getMeeting(int id) {
         Meeting meeting = futureMeetings.get(id);
-        
-    
+        if (meeting == null)
+            meeting = pastMeetings.get(id);
         return meeting;
     }
     
