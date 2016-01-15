@@ -39,7 +39,7 @@ public class ContactManagerImpl implements ContactManager {
     /**
      * Returns the ID of the last added meeting.
      *
-     * @return the last added meeting ID
+     * @return the last added meeting ID or 0 if there's no meetings
      */
     public int getLastMeetingId() {
         return (nextMeetingId - 1);
