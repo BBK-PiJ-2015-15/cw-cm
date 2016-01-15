@@ -304,6 +304,13 @@ public class ContactManagerImplTest {
         assertEquals(contacts, contactManager.getContacts(id));
     }
     
+    // other tests
+    
+    @Test
+    public void testGettingLastMeetingIdWithNoMeetingsShouldbeZero() {
+        assertEquals(0, contactManager.getLastMeetingId());
+    }
+    
     // helper methods
     
     public void assertPastMeetingEquals(Meeting pastMeeting, Calendar date,
