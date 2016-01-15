@@ -91,7 +91,14 @@ public class ContactManagerImpl implements ContactManager {
      *         happening in the future
      */
     public PastMeeting getPastMeeting(int id) {
-        return pastMeetings.get(id);
+        PastMeeting pastMeeting = pastMeetings.get(id);
+        
+        // if not found, make sure it's not in the past meeting map
+        if (pastMeeting == null && futureMeetings.get(id) != null) {
+            throw new IllegalArgumentException(
+                "meeting id must not be of meeting to be held in the future");
+        }
+        return pastMeeting;
     }
     
     /**
