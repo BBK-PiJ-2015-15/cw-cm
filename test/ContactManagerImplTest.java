@@ -104,6 +104,9 @@ public class ContactManagerImplTest {
         // add future meeting
         int id = contactManager.addFutureMeeting(contacts, futureDate);
         
+        // assert last insert ID is the same
+        assertEquals(id, contactManager.getLastMeetingId());
+        
         // assert getting added future meeting returns correct meeting
         FutureMeeting futureMeeting = contactManager.getFutureMeeting(id);
         assertFutureMeetingEquals(futureMeeting, id, futureDate, contacts);
@@ -111,6 +114,20 @@ public class ContactManagerImplTest {
         // assert getting added future meeting using generic method returns
         // correct meeting
         assertEquals(futureMeeting, contactManager.getMeeting(id));
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testGettingFutureMeetingFromPastMeetingMapShouldThrow() {
+        // add contact
+        contactManager.addNewContact("John Doe", "a note");
+        
+        // get all contacts
+        Set<Contact> contacts = contactManager.getContacts("");
+        
+        // add future meeting
+        int id = contactManager.addFutureMeeting(contacts, futureDate);
+        
+        contactManager.getPastMeeting(id);
     }
     
     // past meeting tests
@@ -209,14 +226,7 @@ public class ContactManagerImplTest {
         // add past meeting
         contactManager.addNewPastMeeting(contacts, pastDate, "meeting notes");
         
-        // get past meeting list for contact
-        Contact contact = (Contact)contacts.toArray()[0];
-        List<PastMeeting> pastMeetings = contactManager.getPastMeetingListFor(
-            contact);
-        assertEquals(1, pastMeetings.size());
-        
-        for (PastMeeting pastMeeting : pastMeetings)
-            contactManager.getFutureMeeting(pastMeeting.getId());
+        contactManager.getFutureMeeting(contactManager.getLastMeetingId());
     }
     
     // contact tests
