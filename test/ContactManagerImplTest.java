@@ -143,19 +143,15 @@ public class ContactManagerImplTest {
         Set<Contact> contacts = contactManager.getContacts(ids[0], ids[1]);
         int firstMeetingId = contactManager.addFutureMeeting(contacts,
             futureDate);
-        assertEquals(firstMeetingId, contactManager.getLastMeetingId());
         
         // add a duplicate
         int secondMeetingId = contactManager.addFutureMeeting(contacts,
             futureDate);
         assertNotEquals(firstMeetingId, secondMeetingId);
         
-        // assert getting future meeting list doesn't return duplicate
+        // assert getting future meeting list doesn't return duplicates
         Contact contact = (Contact)contacts.toArray()[0];
-        List<Meeting> futureMeetings = contactManager.getFutureMeetingList(
-            contact);
-        assertEquals(1, futureMeetings.size());
-        assertEquals(futureMeetings.get(0),
+        assertGetFutureMeetingListEquals(contact,
             contactManager.getFutureMeeting(firstMeetingId));
         
         // add future meeting with first and second contact one year in the
@@ -166,19 +162,15 @@ public class ContactManagerImplTest {
         
         // assert getting future meeting list returns in chronologically order
         contact = (Contact)contacts.toArray()[1];
-        futureMeetings = contactManager.getFutureMeetingList(contact);
-        assertEquals(2, futureMeetings.size());
-        assertEquals(futureMeetings.get(0),
-            contactManager.getFutureMeeting(firstMeetingId));
-        assertEquals(futureMeetings.get(1),
+        assertGetFutureMeetingListEquals(contact,
+            contactManager.getFutureMeeting(firstMeetingId),
             contactManager.getFutureMeeting(thirdMeetingId));
         
         // assert getting future meeting list with a contact that will not
         // participate in any future meetings
         contacts = contactManager.getContacts(ids[2]);
         contact = (Contact)contacts.toArray()[0];
-        futureMeetings = contactManager.getFutureMeetingList(contact);
-        assertEquals(0, futureMeetings.size());
+        assertGetFutureMeetingListEquals(contact);
     }
     
     // past meeting tests
@@ -311,12 +303,9 @@ public class ContactManagerImplTest {
         int secondMeetingId = contactManager.getLastMeetingId();
         assertNotEquals(firstMeetingId, secondMeetingId);
         
-        // assert getting past meeting list doesn't return duplicate
+        // assert getting past meeting list doesn't return duplicates
         Contact contact = (Contact)contacts.toArray()[0];
-        List<PastMeeting> pastMeetings = contactManager.getPastMeetingListFor(
-            contact);
-        assertEquals(1, pastMeetings.size());
-        assertEquals(pastMeetings.get(0),
+        assertGetPastMeetingListEquals(contact,
             contactManager.getPastMeeting(firstMeetingId));
         
         // add past meeting with first and second contact one year in the past
@@ -327,19 +316,15 @@ public class ContactManagerImplTest {
         
         // assert getting past meeting list returns in chronologically order
         contact = (Contact)contacts.toArray()[1];
-        pastMeetings = contactManager.getPastMeetingListFor(contact);
-        assertEquals(2, pastMeetings.size());
-        assertEquals(pastMeetings.get(0),
-            contactManager.getPastMeeting(thirdMeetingId));
-        assertEquals(pastMeetings.get(1),
+        assertGetPastMeetingListEquals(contact,
+            contactManager.getPastMeeting(thirdMeetingId),
             contactManager.getPastMeeting(firstMeetingId));
         
         // assert getting past meeting list with a contact that has not
         // participated in any past meetings
         contacts = contactManager.getContacts(ids[2]);
         contact = (Contact)contacts.toArray()[0];
-        pastMeetings = contactManager.getPastMeetingListFor(contact);
-        assertEquals(0, pastMeetings.size());
+        assertGetPastMeetingListEquals(contact);
     }
     
     // contact tests
@@ -426,7 +411,7 @@ public class ContactManagerImplTest {
     
     // helper methods
     
-    public void assertPastMeetingEquals(Meeting pastMeeting, Calendar date,
+    private void assertPastMeetingEquals(Meeting pastMeeting, Calendar date,
             Set<Contact> contacts, String notes) {
         assertTrue(pastMeeting instanceof PastMeeting);
         assertEquals(date, pastMeeting.getDate());
@@ -434,7 +419,7 @@ public class ContactManagerImplTest {
         assertEquals(notes, ((PastMeeting)pastMeeting).getNotes());
     }
     
-    public void assertFutureMeetingEquals(Meeting futureMeeting, int id,
+    private void assertFutureMeetingEquals(Meeting futureMeeting, int id,
             Calendar date, Set<Contact> contacts) {
         assertTrue(futureMeeting instanceof FutureMeeting);
         assertEquals(id, futureMeeting.getId());
@@ -442,11 +427,31 @@ public class ContactManagerImplTest {
         assertEquals(contacts, futureMeeting.getContacts());
     }
     
-    public void assertFutureMeetingEquals(Meeting futureMeeting, Calendar date,
+    private void assertFutureMeetingEquals(Meeting futureMeeting, Calendar date,
             Set<Contact> contacts) {
         assertTrue(futureMeeting instanceof FutureMeeting);
         assertTrue(futureMeeting.getId() > 0);
         assertEquals(date, futureMeeting.getDate());
         assertEquals(contacts, futureMeeting.getContacts());
+    }
+    
+    private void assertGetFutureMeetingListEquals(Contact contact,
+            FutureMeeting... expectedFutureMeetings) {
+        List<Meeting> futureMeetings = contactManager.getFutureMeetingList(
+            contact);
+        assertEquals(expectedFutureMeetings.length, futureMeetings.size());
+        
+        for (int i = 0; i < expectedFutureMeetings.length; i++)
+            assertEquals(futureMeetings.get(i), expectedFutureMeetings[i]);
+    }
+    
+    private void assertGetPastMeetingListEquals(Contact contact,
+            PastMeeting... expectedPastMeetings) {
+        List<PastMeeting> pastMeetings = contactManager.getPastMeetingListFor(
+            contact);
+        assertEquals(expectedPastMeetings.length, pastMeetings.size());
+        
+        for (int i = 0; i < expectedPastMeetings.length; i++)
+            assertEquals(pastMeetings.get(i), expectedPastMeetings[i]);
     }
 }
