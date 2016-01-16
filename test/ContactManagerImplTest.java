@@ -363,13 +363,18 @@ public class ContactManagerImplTest {
     }
     
     @Test(expected=IllegalArgumentException.class)
-    public void testGettingContactByIdWithoutIdsShouldThrow() {
+    public void testGettingContactsByIdWithoutIdsShouldThrow() {
         contactManager.getContacts();
     }
     
     @Test(expected=IllegalArgumentException.class)
-    public void testGettingContactByIdWithNonExistingIdShouldThrow() {
+    public void testGettingContactsByIdWithNonExistingIdShouldThrow() {
         contactManager.getContacts(1);
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testGettingContactByIdWithNonExistingIdShouldThrow() {
+        contactManager.getContact(1);
     }
     
     @Test
