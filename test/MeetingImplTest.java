@@ -96,7 +96,9 @@ public class MeetingImplTest {
         assertEquals(meeting.getContacts(), contacts);
         
         // assert equality
+        Meeting meetingCopy = new MeetingMock(id, date, contacts);
         assertEquals(meeting, meeting);
-        assertEquals(meeting, new MeetingMock(id, date, contacts));
+        assertEquals(meeting, meetingCopy);
+        assertEquals(meeting.hashCode(), meetingCopy.hashCode());
     }
 }

@@ -48,33 +48,60 @@ public abstract class MeetingImpl implements Meeting {
     }
 
     /**
-     * Gets the meeting id.
+     * Returns the meeting ID.
      *
-     * @return The meeting id.
+     * @return the meeting ID.
      */
     public int getId() {
         return id;
     }
     
     /**
-    * Gets the meeting date.
+    * Returns the meeting date.
     *
-    * @return The meeting date.
+    * @return the meeting date.
     */
     public Calendar getDate() {
         return date;
     }
     
     /**
-     * Gets the details of the people attending the meeting.
+     * Returns the details of the people attending the meeting.
      *
      * The set contains a minimum of one contact (if there were
      * just two people: the user and the contact) and may contain an 
      * arbitrary number of them.
      *
-     * @return The set of meeting contacts.
+     * @return the set of meeting contacts.
      */
     public Set<Contact> getContacts() {
         return contacts;
+    }
+    
+    /**
+     * Indicates whether some other object is "equal to" this one.
+     *
+     * @param object the reference object with which to compare.
+     * @return true if this object is the same as the obj argument, false
+     *         otherwise.
+     */
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        } else if (object instanceof MeetingImpl) {
+            MeetingImpl meeting = (MeetingImpl)object;
+            return (this.date.equals(meeting.date) &&
+                this.contacts.equals(meeting.contacts));
+        }
+        return false;
+    }
+    
+    /**
+     * Returns a hash code value for the object.
+     *
+     * @return a hash code value for this object.
+     */
+    public int hashCode() {
+        return date.hashCode() ^ contacts.hashCode();
     }
 }
