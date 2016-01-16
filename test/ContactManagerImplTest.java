@@ -407,6 +407,11 @@ public class ContactManagerImplTest {
         assertEquals(0, contactManager.getLastMeetingId());
     }
     
+    @Test(expected=NullPointerException.class)
+    public void testGettingMeetingListWithNullDateShouldThrow() {
+        contactManager.getMeetingListOn(null);
+    }
+    
     @Test
     public void testGettingMeetingList() {
         final String notes = "meeting notes";
