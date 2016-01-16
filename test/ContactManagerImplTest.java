@@ -114,6 +114,11 @@ public class ContactManagerImplTest {
         // assert getting added future meeting using generic method returns
         // correct meeting
         assertEquals(futureMeeting, contactManager.getMeeting(id));
+        
+        // assert adding meeting notes converts future meeting to a past meeting
+        assertEquals(futureMeeting,
+            contactManager.addMeetingNotes(id, "meeting notes"));
+        assertNull(contactManager.getFutureMeeting(id));
     }
     
     @Test(expected=IllegalArgumentException.class)
@@ -256,11 +261,6 @@ public class ContactManagerImplTest {
         final String extraNotes = "extra notes";
         assertSame(pastMeeting, contactManager.addMeetingNotes(id, extraNotes));
         assertEquals(pastMeeting.getNotes(), notes + "\n" + extraNotes);
-    }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void testAddingPastMeetingNotesWithInvalidShouldThrow() {
-        contactManager.addMeetingNotes(1, "meeting notes");
     }
     
     @Test(expected=NullPointerException.class)
@@ -483,6 +483,11 @@ public class ContactManagerImplTest {
         
         // assert getting meeting list returns sorted by id
         assertGetMeetingListEquals(pastDate, thirdMeetingId, fourthMeetingId);
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testAddingMeetingNotesWithUnknownIdShouldThrow() {
+        contactManager.addMeetingNotes(1, "meeting notes");
     }
     
     // helper methods
