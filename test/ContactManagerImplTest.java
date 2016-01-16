@@ -258,6 +258,11 @@ public class ContactManagerImplTest {
         assertEquals(pastMeeting.getNotes(), notes + "\n" + extraNotes);
     }
     
+    @Test(expected=IllegalArgumentException.class)
+    public void testAddingPastMeetingNotesWithInvalidShouldThrow() {
+        contactManager.addMeetingNotes(1, "meeting notes");
+    }
+    
     @Test(expected=NullPointerException.class)
     public void testAddingPastMeetingNotesWithNullNotesShouldThrow() {
         // add contact
