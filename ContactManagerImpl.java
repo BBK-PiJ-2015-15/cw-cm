@@ -17,7 +17,7 @@ public class ContactManagerImpl implements ContactManager {
     /**
      * The set of contacts.
      */
-    private HashSet<Contact> contacts = new HashSet<Contact>();
+    private TreeMap<Integer, Contact> contacts = new TreeMap<>();
     
     /**
      * The map of future meetings.
@@ -61,7 +61,7 @@ public class ContactManagerImpl implements ContactManager {
     public int addFutureMeeting(Set<Contact> contacts, Calendar date) {
         if (contacts == null || date == null) {
             throw new NullPointerException("contacts or date must not be null");
-        } else if (!this.contacts.containsAll(contacts)) {
+        } else if (!this.contacts.values().containsAll(contacts)) {
             throw new IllegalArgumentException(
                 "contacts must not be unknown");
         } else if (date.compareTo(Calendar.getInstance()) < 0) {
@@ -149,7 +149,7 @@ public class ContactManagerImpl implements ContactManager {
     public List<Meeting> getFutureMeetingList(Contact contact) {
         if (contact == null)
             throw new NullPointerException("contact must not be null");
-        else if (!contacts.contains(contact))
+        else if (!contacts.containsKey(contact.getId()))
             throw new IllegalArgumentException("contact must not be unknown");
     
         // create a sorted set with a custom comparator than compares the dates
@@ -200,7 +200,7 @@ public class ContactManagerImpl implements ContactManager {
     public List<PastMeeting> getPastMeetingListFor(Contact contact) {
         if (contact == null)
             throw new NullPointerException("contact must not be null");
-        else if (!contacts.contains(contact))
+        else if (!contacts.containsKey(contact.getId()))
             throw new IllegalArgumentException("contact must not be unknown");
     
         // create a sorted set with a custom comparator than compares the dates
@@ -236,7 +236,7 @@ public class ContactManagerImpl implements ContactManager {
         if (contacts == null || date == null || notes == null) {
             throw new NullPointerException(
                 "contacts, date or notes must not be null");
-        } else if (!this.contacts.containsAll(contacts)) {
+        } else if (!this.contacts.values().containsAll(contacts)) {
             throw new IllegalArgumentException(
                 "contacts must not be unknown or non-existent");
         } else if (date.compareTo(Calendar.getInstance()) >= 0) {
@@ -290,8 +290,11 @@ public class ContactManagerImpl implements ContactManager {
                 "name or notes must not be empty");
         }
         
+        // create contact
+        Contact contact = new ContactImpl(nextContactId, name, notes);
+        
         // add contact to set
-        contacts.add(new ContactImpl(nextContactId, name, notes));
+        contacts.put(nextContactId, contact);
         
         // increment next contact ID
         return nextContactId++;
@@ -313,11 +316,11 @@ public class ContactManagerImpl implements ContactManager {
     
         Set<Contact> newContacts = new HashSet<Contact>();
         if (name.isEmpty()) {
-            newContacts.addAll(contacts);
+            newContacts.addAll(contacts.values());
         } else {
             name = name.toLowerCase();
             
-            for (Contact contact : contacts) {
+            for (Contact contact : contacts.values()) {
                 if (contact.getName().toLowerCase().contains(name))
                     newContacts.add(contact);
             }
@@ -343,10 +346,9 @@ public class ContactManagerImpl implements ContactManager {
         Set<Contact> newContacts = new HashSet<Contact>();
         
         for (int id : ids) {
-            for (Contact contact : contacts) {
-                if (contact.getId() == id)
-                    newContacts.add(contact);
-            }
+            Contact contact = contacts.get(id);
+            if (contact != null)
+                newContacts.add(contact);
         }
         
         if (newContacts.isEmpty()) {
@@ -354,6 +356,23 @@ public class ContactManagerImpl implements ContactManager {
                 "no id provided or non existing contact");
         }
         return newContacts;
+    }
+    
+    /**
+    * Returns the contact that correspond to the ID.
+    *
+    * @param id the contact ID
+    * @return the contact
+    * @throws IllegalArgumentException if the ID does not correspond to a known
+    *         contact
+    */
+    public Contact getContact(int id) {
+        Contact contact = contacts.get(id);
+        if (contact == null) {
+            throw new IllegalArgumentException(
+                "id must correspond to a known contact");
+        }
+        return contact;
     }
     
     /**
