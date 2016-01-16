@@ -55,7 +55,7 @@ public class ContactManagerImpl implements ContactManager {
      * @param date the date on which the meeting will take place
      * @return the meeting ID
      * @throws IllegalArgumentException if the meeting is set for a time
-     *         in the past or if any contact is unknown or non-existent
+     *         in the past or if any contact is unknown
      * @throws NullPointerException if the contacts or date are null
      */
     public int addFutureMeeting(Set<Contact> contacts, Calendar date) {
@@ -63,7 +63,7 @@ public class ContactManagerImpl implements ContactManager {
             throw new NullPointerException("contacts or date must not be null");
         } else if (!this.contacts.containsAll(contacts)) {
             throw new IllegalArgumentException(
-                "contacts must not be unknown or non-existent");
+                "contacts must not be unknown");
         } else if (date.compareTo(Calendar.getInstance()) < 0) {
             throw new IllegalArgumentException(
                 "date must be set for a time in the future");
@@ -179,8 +179,13 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if the contact is null
      */
     public List<PastMeeting> getPastMeetingListFor(Contact contact) {
-        LinkedList<PastMeeting> list = new LinkedList<>();
+        if (contact == null)
+            throw new NullPointerException("contact must not be null");
+        else if (!contacts.contains(contact))
+            throw new IllegalArgumentException("contact must not be unknown");
     
+        LinkedList<PastMeeting> list = new LinkedList<>();
+        
         for (PastMeeting pastMeeting : pastMeetings.values()) {
             if (pastMeeting.getContacts().contains(contact))
                 list.add(pastMeeting);
