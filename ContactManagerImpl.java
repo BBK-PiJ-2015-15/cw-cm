@@ -22,12 +22,13 @@ public class ContactManagerImpl implements ContactManager {
     /**
      * The map of future meetings.
      */
-    private TreeMap<Integer, FutureMeeting> futureMeetings = new TreeMap<>();
+    private TreeMap<Integer, FutureMeetingImpl> futureMeetings =
+        new TreeMap<>();
     
     /**
      * The map of past meetings.
      */
-    private TreeMap<Integer, PastMeeting> pastMeetings = new TreeMap<>();
+    private TreeMap<Integer, PastMeetingImpl> pastMeetings = new TreeMap<>();
     
     /**
      * Constructs a new contact manager.
@@ -70,8 +71,8 @@ public class ContactManagerImpl implements ContactManager {
         }
         
         // create future meeting
-        FutureMeeting futureMeeting = new FutureMeetingImpl(nextMeetingId, date,
-            contacts);
+        FutureMeetingImpl futureMeeting = new FutureMeetingImpl(nextMeetingId,
+            date, contacts);
         
         // add meeting to map
         futureMeetings.put(nextMeetingId, futureMeeting);
@@ -276,7 +277,7 @@ public class ContactManagerImpl implements ContactManager {
         }
         
         // create past meeting
-        PastMeeting pastMeeting = new PastMeetingImpl(nextMeetingId, date,
+        PastMeetingImpl pastMeeting = new PastMeetingImpl(nextMeetingId, date,
             contacts, notes);
         
         // add meeting to map
@@ -302,7 +303,11 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if the notes is null
      */
     public PastMeeting addMeetingNotes(int id, String notes) {
-        return null;
+        PastMeetingImpl pastMeeting = pastMeetings.get(id);
+        if (pastMeeting != null) {
+            pastMeeting.addNotes(notes);
+        }
+        return pastMeeting;
     }
     
     /**
