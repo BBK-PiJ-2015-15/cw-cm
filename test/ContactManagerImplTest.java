@@ -379,7 +379,7 @@ public class ContactManagerImplTest {
         int id = contactManager.addNewContact(name, "a note");
         assertTrue(id > 0);
         
-        // contact must be in the set containing all contacts
+        // assert getting all contacts contains contact
         Set<Contact> contacts = contactManager.getContacts("");
         assertEquals(1, contacts.size());
         
@@ -392,14 +392,17 @@ public class ContactManagerImplTest {
         }
         assertTrue(found);
         
-        // get contact by name
+        // assert getting contacts by name contains contact
         assertEquals(contacts, contactManager.getContacts(name));
         
-        // get contact by partial string in name
+        // assert getting contacts by partial string in name contains contact
         assertEquals(contacts, contactManager.getContacts("Doe"));
         
-        // get contact by id
+        // assert gettting contacts by id contains contact
         assertEquals(contacts, contactManager.getContacts(id));
+        
+        // assert getting contact by id
+        assertEquals(name, contactManager.getContact(id).getName());
     }
     
     // other tests
