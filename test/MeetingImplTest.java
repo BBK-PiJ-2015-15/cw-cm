@@ -1,30 +1,57 @@
 import java.util.*;
 import static org.junit.Assert.*;
 import org.junit.*;
+import static org.mockito.Mockito.*;
 
 /**
- * Implementation of the MeetingImplTest test class.
+ * MeetingImplTest unit test.
+ *
+ * Test cases:
+ * -
  */
 public class MeetingImplTest {
-    private class MeetingMock extends MeetingImpl {
-        public MeetingMock(int id, Calendar date, Set<Contact> contacts) {
-            super(id, date, contacts);
-        }
-    }
-    
+    /**
+     * The random number generator.
+     */
     private static Random random;
     
-    private int id;
-    private final Calendar calendar = Calendar.getInstance();
-    private final Set<Contact> contacts = new HashSet<Contact>();
-    
     /**
-     * Generates the random seed number.
+     * Creates the random seed number.
      */
     @BeforeClass
     public static void generateSeed() {
         random = new Random();
     }
+    
+    /**
+     * A mock class extending the abstract meeting class.
+     */
+    private final class MeetingMock extends MeetingImpl {
+        public MeetingMock(int id, Calendar date, Set<Contact> contacts) {
+            super(id, date, contacts);
+        }
+    }
+    
+    /**
+     * The meeting id.
+     *
+     * The id is randomly generated from a valid range.
+     */
+    private int id;
+    
+    /**
+     * A date.
+     */
+    private final Calendar date = Calendar.getInstance();
+    
+    /**
+     * The set of past meeting contacts.
+     *
+     * The contacts are mocked to help testing this implementation. They are
+     * tested in a separate unit test.
+     */
+    private final Set<Contact> contacts = new HashSet<Contact>(
+        Arrays.asList(mock(Contact.class), mock(Contact.class)));
     
     /**
      * Creates a new meeting test.
@@ -36,20 +63,14 @@ public class MeetingImplTest {
         id = random.nextInt(Integer.MAX_VALUE - 1) + 1;
     }
     
-    @Before
-    public void setUp() {
-        contacts.add(new ContactImpl(1, "John Doe"));
-        contacts.add(new ContactImpl(2, "Jane Doe"));
-    }
-    
     @Test(expected=IllegalArgumentException.class)
     public void testNewMeetingWithNegativeIdShouldThrow() {
-        Meeting meeting = new MeetingMock(-1, calendar, contacts);
+        Meeting meeting = new MeetingMock(-1, date, contacts);
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testNewMeetingWithZeroIdShouldThrow() {
-        Meeting meeting = new MeetingMock(0, calendar, contacts);
+        Meeting meeting = new MeetingMock(0, date, contacts);
     }
     
     @Test(expected=NullPointerException.class)
@@ -59,19 +80,23 @@ public class MeetingImplTest {
     
     @Test(expected=NullPointerException.class)
     public void testNewMeetingWithNullContactsShouldThrow() {
-        Meeting meeting = new MeetingMock(id, calendar, null);
+        Meeting meeting = new MeetingMock(id, date, null);
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testNewMeetingWithEmptyContactsShouldThrow() {
-        Meeting meeting = new MeetingMock(id, calendar, new HashSet<Contact>());
+        Meeting meeting = new MeetingMock(id, date, new HashSet<Contact>());
     }
     
     @Test
     public void testNewMeetingWithIdNameAndContacts() {
-        Meeting meeting = new MeetingMock(id, calendar, contacts);
+        Meeting meeting = new MeetingMock(id, date, contacts);
         assertEquals(meeting.getId(), id);
-        assertEquals(meeting.getDate(), calendar);
+        assertEquals(meeting.getDate(), date);
         assertEquals(meeting.getContacts(), contacts);
+        
+        // assert equality
+        assertEquals(meeting, meeting);
+        assertEquals(meeting, new MeetingMock(id, date, contacts));
     }
 }
