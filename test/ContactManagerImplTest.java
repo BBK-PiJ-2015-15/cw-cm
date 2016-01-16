@@ -161,7 +161,7 @@ public class ContactManagerImplTest {
         // add future meeting with first and second contact one year in the
         // future
         Calendar date = Calendar.getInstance();
-        date.set(Calendar.YEAR, 1);
+        date.add(Calendar.YEAR, 1);
         int thirdMeetingId = contactManager.addFutureMeeting(contacts, date);
         
         // assert getting future meeting list returns in chronologically order
@@ -321,7 +321,7 @@ public class ContactManagerImplTest {
         
         // add past meeting with first and second contact one year in the past
         Calendar date = Calendar.getInstance();
-        date.set(Calendar.YEAR, -1);
+        date.add(Calendar.YEAR, -1);
         contactManager.addNewPastMeeting(contacts, date, notes);
         int thirdMeetingId = contactManager.getLastMeetingId();
         
