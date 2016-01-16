@@ -240,6 +240,32 @@ public class ContactManagerImplTest {
         contactManager.getPastMeetingListFor(contact);
     }
     
+    @Test
+    public void testGettingPastMeetingList() {
+        // add contacts
+        final int[] ids = {
+            contactManager.addNewContact("John Doe", "a note"),
+            contactManager.addNewContact("Jane Doe", "another note"),
+            contactManager.addNewContact("James Bond", "vodka martini")
+        };
+        final String notes = "meeting notes";
+        
+        // add past meeting with first and second contact
+        Set<Contact> contacts = contactManager.getContacts(ids[0], ids[1]);
+        contactManager.addNewPastMeeting(contacts, pastDate, notes);
+        int id = contactManager.getLastMeetingId();
+        
+        // add a duplicate
+        contactManager.addNewPastMeeting(contacts, pastDate, notes);
+        
+        // assert getting past meeting list doesn't return duplicate
+        Contact contact = (Contact)contacts.toArray()[0];
+        List<PastMeeting> pastMeetings = contactManager.getPastMeetingListFor(
+            contact);
+        assertEquals(1, pastMeetings.size());
+        assertTrue(pastMeetings.contains(contactManager.getPastMeeting(id)));
+    }
+    
     // contact tests
     
     @Test(expected=NullPointerException.class)
