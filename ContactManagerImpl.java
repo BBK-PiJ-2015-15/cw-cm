@@ -147,7 +147,27 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if the contact is null
      */
     public List<Meeting> getFutureMeetingList(Contact contact) {
-        return null;
+        if (contact == null)
+            throw new NullPointerException("contact must not be null");
+        else if (!contacts.contains(contact))
+            throw new IllegalArgumentException("contact must not be unknown");
+    
+        // create a sorted set with a custom comparator than compares the dates
+        // of two past meetings
+        // by using a set we also remove duplicates
+        TreeSet<Meeting> sortedSet = new TreeSet<>(
+                new Comparator<Meeting>() {
+            public int compare(Meeting m1, Meeting m2) {
+                return m1.getDate().compareTo(m2.getDate());
+            }
+        });
+        
+        // add the past meetings to the set
+        for (Meeting futureMeeting : futureMeetings.values()) {
+            if (futureMeeting.getContacts().contains(contact))
+                sortedSet.add(futureMeeting);
+        }
+        return new ArrayList<Meeting>(sortedSet);
     }
     
     /**
