@@ -303,6 +303,9 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if the notes is null
      */
     public PastMeeting addMeetingNotes(int id, String notes) {
+        if (notes == null)
+            throw new NullPointerException("notes must not be null");
+    
         PastMeetingImpl pastMeeting = pastMeetings.get(id);
         if (pastMeeting != null) {
             pastMeeting.addNotes(notes);
