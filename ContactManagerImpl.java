@@ -310,6 +310,11 @@ public class ContactManagerImpl implements ContactManager {
         if (pastMeeting != null) {
             pastMeeting.addNotes(notes);
         }
+        
+        if (pastMeeting == null) {
+            throw new IllegalArgumentException(
+                "id must correspond to a known meeting");
+        }
         return pastMeeting;
     }
     
