@@ -117,7 +117,7 @@ public class ContactManagerImplTest {
     }
     
     @Test(expected=IllegalArgumentException.class)
-    public void testGettingFutureMeetingFromPastMeetingMapShouldThrow() {
+    public void testGettingFutureMeetingFromPastMeetingGetterShouldThrow() {
         // add contact
         contactManager.addNewContact("John Doe", "a note");
         
@@ -216,7 +216,7 @@ public class ContactManagerImplTest {
     }
     
     @Test(expected=IllegalArgumentException.class)
-    public void testGettingPastMeetingFromFutureMeetingMapShouldThrow() {
+    public void testGettingPastMeetingFromFutureMeetingGetterShouldThrow() {
         // add contact
         contactManager.addNewContact("John Doe", "a note");
         
@@ -227,6 +227,17 @@ public class ContactManagerImplTest {
         contactManager.addNewPastMeeting(contacts, pastDate, "meeting notes");
         
         contactManager.getFutureMeeting(contactManager.getLastMeetingId());
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void testGettingPastMeetingListWithNullContactShouldThrow() {
+        contactManager.getPastMeetingListFor(null);
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testGettingPastMeetingListWithUnknownContactShouldThrow() {
+        Contact contact = mock(Contact.class);
+        contactManager.getPastMeetingListFor(contact);
     }
     
     // contact tests
