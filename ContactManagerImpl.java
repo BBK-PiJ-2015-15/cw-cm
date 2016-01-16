@@ -157,11 +157,13 @@ public class ContactManagerImpl implements ContactManager {
         // by using a set we also remove duplicates
         TreeSet<Meeting> sortedSet = new TreeSet<>(new Comparator<Meeting>() {
             public int compare(Meeting m1, Meeting m2) {
+                if (m1.equals(m2))
+                    return 0;
                 return m1.getDate().compareTo(m2.getDate());
             }
         });
         
-        // add the past meetings to the set
+        // add the future meetings to the set
         for (FutureMeeting futureMeeting : futureMeetings.values()) {
             if (futureMeeting.getContacts().contains(contact))
                 sortedSet.add(futureMeeting);
@@ -185,7 +187,31 @@ public class ContactManagerImpl implements ContactManager {
         if (date == null)
             throw new NullPointerException("date must not be null");
         
-        return null;
+        // create a sorted set with a custom comparator than compares the IDs
+        // of two meetings
+        // by using a set we also remove duplicates
+        TreeSet<Meeting> sortedSet = new TreeSet<>(new Comparator<Meeting>() {
+            public int compare(Meeting m1, Meeting m2) {
+                if (m1.equals(m2))
+                    return 0;
+                return Integer.compare(m1.getId(), m2.getId());
+            }
+        });
+        
+        if (date.before(Calendar.getInstance())) {
+            // add the past meetings to the set
+            for (PastMeeting pastMeeting : pastMeetings.values()) {
+                if (pastMeeting.getDate().equals(date))
+                    sortedSet.add(pastMeeting);
+            }
+        } else {
+            // add the future meetings to the set
+            for (FutureMeeting futureMeeting : futureMeetings.values()) {
+                if (futureMeeting.getDate().equals(date))
+                    sortedSet.add(futureMeeting);
+            }
+        }
+        return new ArrayList<Meeting>(sortedSet);
     }
     
     /**
@@ -212,6 +238,8 @@ public class ContactManagerImpl implements ContactManager {
         TreeSet<PastMeeting> sortedSet = new TreeSet<>(
                 new Comparator<PastMeeting>() {
             public int compare(PastMeeting m1, PastMeeting m2) {
+                if (m1.equals(m2))
+                    return 0;
                 return m1.getDate().compareTo(m2.getDate());
             }
         });
