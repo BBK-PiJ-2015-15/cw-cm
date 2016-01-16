@@ -22,12 +22,12 @@ public class ContactManagerImpl implements ContactManager {
     /**
      * The map of future meetings.
      */
-    private TreeMap<Integer, FutureMeeting> futureMeetings = new TreeMap<>();
+    private TreeMap<Integer, Meeting> futureMeetings = new TreeMap<>();
     
     /**
      * The map of past meetings.
      */
-    private TreeMap<Integer, PastMeeting> pastMeetings = new TreeMap<>();
+    private TreeMap<Integer, Meeting> pastMeetings = new TreeMap<>();
     
     /**
      * Constructs a new contact manager.
@@ -91,7 +91,7 @@ public class ContactManagerImpl implements ContactManager {
      *         happening in the future
      */
     public PastMeeting getPastMeeting(int id) {
-        PastMeeting pastMeeting = pastMeetings.get(id);
+        PastMeeting pastMeeting = (PastMeeting)pastMeetings.get(id);
         
         // if not found, make sure it's not in the past meeting map
         if (pastMeeting == null && futureMeetings.get(id) != null) {
@@ -111,7 +111,7 @@ public class ContactManagerImpl implements ContactManager {
      *         happening in the past
      */
     public FutureMeeting getFutureMeeting(int id) {
-        FutureMeeting futureMeeting = futureMeetings.get(id);
+        FutureMeeting futureMeeting = (FutureMeeting)futureMeetings.get(id);
         
         // if not found, make sure it's not in the past meeting map
         if (futureMeeting == null && pastMeetings.get(id) != null) {
@@ -184,13 +184,22 @@ public class ContactManagerImpl implements ContactManager {
         else if (!contacts.contains(contact))
             throw new IllegalArgumentException("contact must not be unknown");
     
-        LinkedList<PastMeeting> list = new LinkedList<>();
+        // create a sorted set with a custom comparator than compares the dates
+        // of two past meetings
+        // by using a set we also remove duplicates
+        TreeSet<PastMeeting> sortedSet = new TreeSet<>(
+                new Comparator<PastMeeting>() {
+            public int compare(PastMeeting m1, PastMeeting m2) {
+                return m1.getDate().compareTo(m2.getDate());
+            }
+        });
         
-        for (PastMeeting pastMeeting : pastMeetings.values()) {
+        // add the past meetings to the set
+        for (Meeting pastMeeting : pastMeetings.values()) {
             if (pastMeeting.getContacts().contains(contact))
-                list.add(pastMeeting);
+                sortedSet.add((PastMeeting)pastMeeting);
         }
-        return list;
+        return new ArrayList<PastMeeting>(sortedSet);
     }
     
     /**
@@ -262,8 +271,10 @@ public class ContactManagerImpl implements ContactManager {
                 "name or notes must not be empty");
         }
         
+        // add contact to set
         contacts.add(new ContactImpl(nextContactId, name, notes));
         
+        // increment next contact ID
         return nextContactId++;
     }
     

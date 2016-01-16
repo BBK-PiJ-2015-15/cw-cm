@@ -257,6 +257,7 @@ public class ContactManagerImplTest {
         
         // add a duplicate
         contactManager.addNewPastMeeting(contacts, pastDate, notes);
+        assertNotEquals(id, contactManager.getLastMeetingId());
         
         // assert getting past meeting list doesn't return duplicate
         Contact contact = (Contact)contacts.toArray()[0];
