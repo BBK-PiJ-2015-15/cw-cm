@@ -334,7 +334,7 @@ public class ContactManagerImpl implements ContactManager {
             throw new IllegalArgumentException(
                 "no id provided or non existing contact");
         }
-        return contacts;
+        return newContacts;
     }
     
     /**
