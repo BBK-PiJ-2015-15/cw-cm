@@ -309,11 +309,20 @@ public class ContactManagerImpl implements ContactManager {
         PastMeetingImpl pastMeeting = pastMeetings.get(id);
         if (pastMeeting != null) {
             pastMeeting.addNotes(notes);
-        }
-        
-        if (pastMeeting == null) {
-            throw new IllegalArgumentException(
-                "id must correspond to a known meeting");
+        } else {
+            // remove from future meetings
+            FutureMeetingImpl futureMeeting = futureMeetings.remove(id);
+            if (futureMeeting == null) {
+                throw new IllegalArgumentException(
+                    "id must correspond to a known meeting");
+            }
+            
+            // create past meeting
+            pastMeeting = new PastMeetingImpl(id, futureMeeting.getDate(),
+                futureMeeting.getContacts(), notes);
+            
+            // add meeting to map
+            pastMeetings.put(id, pastMeeting);
         }
         return pastMeeting;
     }
