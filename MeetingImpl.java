@@ -86,9 +86,7 @@ public abstract class MeetingImpl implements Meeting {
      *         otherwise.
      */
     public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        } else if (object instanceof MeetingImpl) {
+        if (object instanceof MeetingImpl) {
             MeetingImpl meeting = (MeetingImpl)object;
             return (this.date.equals(meeting.date) &&
                 this.contacts.equals(meeting.contacts));
