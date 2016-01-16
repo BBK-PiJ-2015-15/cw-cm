@@ -282,6 +282,13 @@ public class ContactManagerImplTest {
             contactManager.getPastMeeting(thirdMeetingId));
         assertEquals(pastMeetings.get(1),
             contactManager.getPastMeeting(firstMeetingId));
+        
+        // assert getting past meeting list with a contact that has not
+        // participated in any past meetings
+        contacts = contactManager.getContacts(ids[2]);
+        contact = (Contact)contacts.toArray()[0];
+        pastMeetings = contactManager.getPastMeetingListFor(contact);
+        assertEquals(0, pastMeetings.size());
     }
     
     // contact tests
