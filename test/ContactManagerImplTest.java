@@ -118,7 +118,6 @@ public class ContactManagerImplTest {
         // assert adding meeting notes converts future meeting to a past meeting
         assertEquals(futureMeeting,
             contactManager.addMeetingNotes(id, "meeting notes"));
-        assertNull(contactManager.getFutureMeeting(id));
     }
     
     @Test(expected=IllegalArgumentException.class)
