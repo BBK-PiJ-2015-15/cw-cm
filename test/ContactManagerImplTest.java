@@ -150,8 +150,7 @@ public class ContactManagerImplTest {
         assertNotEquals(firstMeetingId, secondMeetingId);
         
         // assert getting future meeting list doesn't return duplicates
-        Contact contact = (Contact)contacts.toArray()[0];
-        assertGetFutureMeetingListEquals(contact,
+        assertGetFutureMeetingListEquals(contactManager.getContact(ids[0]),
             contactManager.getFutureMeeting(firstMeetingId));
         
         // add future meeting with first and second contact one year in the
@@ -161,16 +160,13 @@ public class ContactManagerImplTest {
         int thirdMeetingId = contactManager.addFutureMeeting(contacts, date);
         
         // assert getting future meeting list returns in chronologically order
-        contact = (Contact)contacts.toArray()[1];
-        assertGetFutureMeetingListEquals(contact,
+        assertGetFutureMeetingListEquals(contactManager.getContact(ids[1]),
             contactManager.getFutureMeeting(firstMeetingId),
             contactManager.getFutureMeeting(thirdMeetingId));
         
         // assert getting future meeting list with a contact that will not
         // participate in any future meetings
-        contacts = contactManager.getContacts(ids[2]);
-        contact = (Contact)contacts.toArray()[0];
-        assertGetFutureMeetingListEquals(contact);
+        assertGetFutureMeetingListEquals(contactManager.getContact(ids[2]));
     }
     
     // past meeting tests
@@ -227,7 +223,6 @@ public class ContactManagerImplTest {
         
         // get all contacts
         Set<Contact> contacts = contactManager.getContacts("");
-        assertEquals(1, contacts.size());
         
         contactManager.addNewPastMeeting(contacts, futureDate, "meeting notes");
     }
@@ -304,8 +299,7 @@ public class ContactManagerImplTest {
         assertNotEquals(firstMeetingId, secondMeetingId);
         
         // assert getting past meeting list doesn't return duplicates
-        Contact contact = (Contact)contacts.toArray()[0];
-        assertGetPastMeetingListEquals(contact,
+        assertGetPastMeetingListEquals(contactManager.getContact(ids[0]),
             contactManager.getPastMeeting(firstMeetingId));
         
         // add past meeting with first and second contact one year in the past
@@ -315,16 +309,13 @@ public class ContactManagerImplTest {
         int thirdMeetingId = contactManager.getLastMeetingId();
         
         // assert getting past meeting list returns in chronologically order
-        contact = (Contact)contacts.toArray()[1];
-        assertGetPastMeetingListEquals(contact,
+        assertGetPastMeetingListEquals(contactManager.getContact(ids[1]),
             contactManager.getPastMeeting(thirdMeetingId),
             contactManager.getPastMeeting(firstMeetingId));
         
         // assert getting past meeting list with a contact that has not
         // participated in any past meetings
-        contacts = contactManager.getContacts(ids[2]);
-        contact = (Contact)contacts.toArray()[0];
-        assertGetPastMeetingListEquals(contact);
+        assertGetPastMeetingListEquals(contactManager.getContact(ids[2]));
     }
     
     // contact tests
