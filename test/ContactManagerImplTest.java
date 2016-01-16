@@ -130,6 +130,57 @@ public class ContactManagerImplTest {
         contactManager.getPastMeeting(id);
     }
     
+    @Test
+    public void testGettingFutureMeetingList() {
+        // add contacts
+        final int[] ids = {
+            contactManager.addNewContact("John Doe", "a note"),
+            contactManager.addNewContact("Jane Doe", "another note"),
+            contactManager.addNewContact("James Bond", "vodka martini")
+        };
+        
+        // add future meeting with first and second contact
+        Set<Contact> contacts = contactManager.getContacts(ids[0], ids[1]);
+        int firstMeetingId = contactManager.addFutureMeeting(contacts,
+            futureDate);
+        assertEquals(firstMeetingId, contactManager.getLastMeetingId());
+        
+        // add a duplicate
+        int secondMeetingId = contactManager.addFutureMeeting(contacts,
+            futureDate);
+        assertNotEquals(firstMeetingId, secondMeetingId);
+        
+        // assert getting future meeting list doesn't return duplicate
+        Contact contact = (Contact)contacts.toArray()[0];
+        List<Meeting> futureMeetings = contactManager.getFutureMeetingList(
+            contact);
+        assertEquals(1, futureMeetings.size());
+        assertEquals(futureMeetings.get(0),
+            contactManager.getFutureMeeting(firstMeetingId));
+        
+        // add future meeting with first and second contact one year in the
+        // future
+        Calendar date = Calendar.getInstance();
+        date.set(Calendar.YEAR, 1);
+        int thirdMeetingId = contactManager.addFutureMeeting(contacts, date);
+        
+        // assert getting future meeting list returns in chronologically order
+        contact = (Contact)contacts.toArray()[1];
+        futureMeetings = contactManager.getFutureMeetingList(contact);
+        assertEquals(2, futureMeetings.size());
+        assertEquals(futureMeetings.get(0),
+            contactManager.getFutureMeeting(firstMeetingId));
+        assertEquals(futureMeetings.get(1),
+            contactManager.getFutureMeeting(thirdMeetingId));
+        
+        // assert getting future meeting list with a contact that will not
+        // participate in any future meetings
+        contacts = contactManager.getContacts(ids[2]);
+        contact = (Contact)contacts.toArray()[0];
+        futureMeetings = contactManager.getFutureMeetingList(contact);
+        assertEquals(0, futureMeetings.size());
+    }
+    
     // past meeting tests
     
     @Test(expected=NullPointerException.class)
