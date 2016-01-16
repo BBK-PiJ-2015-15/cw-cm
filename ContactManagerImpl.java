@@ -174,7 +174,7 @@ public class ContactManagerImpl implements ContactManager {
      * specified date.
      *
      * If there are none, the returned list will be empty. Otherwise, it will be
-     * chronologically sorted and will not contain any duplicates.
+     * sorted by id and will not contain any duplicates.
      *
      * @param date the date
      * @return a list of meeting(s) schedule for or that took place on the
@@ -182,6 +182,9 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if the date is null
      */
     public List<Meeting> getMeetingListOn(Calendar date) {
+        if (date == null)
+            throw new NullPointerException("date must not be null");
+        
         return null;
     }
     
