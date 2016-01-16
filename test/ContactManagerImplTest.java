@@ -252,7 +252,25 @@ public class ContactManagerImplTest {
         // correct meeting
         assertEquals(pastMeeting, contactManager.getMeeting(id));
         
+        // assert adding extra notes to meeting
+        final String extraNotes = "extra notes";
+        assertSame(pastMeeting, contactManager.addMeetingNotes(id, extraNotes));
+        assertEquals(pastMeeting.getNotes(), notes + "\n" + extraNotes);
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void testAddingPastMeetingNotesWithNullNotesShouldThrow() {
+        // add contact
+        contactManager.addNewContact("John Doe", "a note");
         
+        // get all contacts
+        Set<Contact> contacts = contactManager.getContacts("");
+        
+        // add past meeting
+        contactManager.addNewPastMeeting(contacts, pastDate, "meeting notes");
+        int id = contactManager.getLastMeetingId();
+        
+        contactManager.addMeetingNotes(id, null);
     }
     
     @Test(expected=IllegalArgumentException.class)
