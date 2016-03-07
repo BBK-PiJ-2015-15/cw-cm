@@ -310,12 +310,21 @@ public class ContactManagerImpl implements ContactManager {
         if (pastMeeting != null) {
             pastMeeting.addNotes(notes);
         } else {
-            // remove from future meetings
-            FutureMeetingImpl futureMeeting = futureMeetings.remove(id);
+            FutureMeetingImpl futureMeeting = futureMeetings.get(id);
             if (futureMeeting == null) {
                 throw new IllegalArgumentException(
                     "id must correspond to a known meeting");
             }
+            
+            // validate date
+            Calendar date = futureMeeting.getDate();
+            if (date.compareTo(Calendar.getInstance()) >= 0) {
+                throw new IllegalStateException(
+                    "meeting hasn't take place yet");
+            }
+            
+            // remove from future meetings
+            futureMeetings.remove(id);
             
             // create past meeting
             pastMeeting = new PastMeetingImpl(id, futureMeeting.getDate(),
