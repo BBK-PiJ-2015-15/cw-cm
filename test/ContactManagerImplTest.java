@@ -342,6 +342,24 @@ public class ContactManagerImplTest {
         assertGetPastMeetingListEquals(contactManager.getContact(ids[2]));
     }
     
+    // add meeting notes tests
+    
+    @Test(expected=IllegalStateException.class)
+    public void testAddingMeetingNotesToMeetingInFutureDateShouldThrow() {
+        // add contacts
+        contactManager.addNewContact("John Doe", "a note");
+        contactManager.addNewContact("Jane Doe", "another note");
+        contactManager.addNewContact("James Bond", "vodka martini");
+        
+        // get all contacts
+        Set<Contact> contacts = contactManager.getContacts("");
+        
+        // add future meeting
+        int id = contactManager.addFutureMeeting(contacts, futureDate);
+        
+        contactManager.addMeetingNotes(id, "meeting notes");
+    }
+    
     // contact tests
     
     @Test(expected=NullPointerException.class)
