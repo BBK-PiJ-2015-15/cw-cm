@@ -114,10 +114,6 @@ public class ContactManagerImplTest {
         // assert getting added future meeting using generic method returns
         // correct meeting
         assertEquals(futureMeeting, contactManager.getMeeting(id));
-        
-        // assert adding meeting notes converts future meeting to a past meeting
-        assertEquals(futureMeeting,
-            contactManager.addMeetingNotes(id, "meeting notes"));
     }
     
     @Test(expected=IllegalArgumentException.class)
