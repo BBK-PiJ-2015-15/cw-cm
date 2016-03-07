@@ -356,6 +356,38 @@ public class ContactManagerImplTest {
         contactManager.addMeetingNotes(id, "meeting notes");
     }
     
+    @Test
+    public void testAddingMeetingNotes() {
+        // add contacts
+        contactManager.addNewContact("John Doe", "a note");
+        contactManager.addNewContact("Jane Doe", "another note");
+        contactManager.addNewContact("James Bond", "vodka martini");
+        
+        // get all contacts
+        Set<Contact> contacts = contactManager.getContacts("");
+        
+        // create a date one second in the future
+        Calendar date = Calendar.getInstance();
+        futureDate.add(Calendar.SECOND, 1);
+        
+        // add future meeting
+        int id = contactManager.addFutureMeeting(contacts, date);
+        
+        // get future meeting
+        FutureMeeting futureMeeting = contactManager.getFutureMeeting(id);
+        
+        // wait until date is in future
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        
+        // assert adding notes converts meeting to a past meeting
+        assertEquals(futureMeeting,
+            contactManager.addMeetingNotes(id, "meeting notes"));
+    }
+    
     // contact tests
     
     @Test(expected=NullPointerException.class)
