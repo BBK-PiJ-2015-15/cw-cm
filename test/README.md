@@ -1,18 +1,14 @@
 # Coursework 3 Unit Tests
-JUnit and mockito are required dependencies to run the unit tests.
+JUnit is the only required dependency to run the unit tests.
 
 ## JUnit
 A framework to write repeatable tests.
 
 [JUnit](<http://junit.org>)
 
-## mockito
-
-A mocking framework for unit tests.
-
-[mockito](<http://mockito.org>)
-
 ## Run script
+An example of a script to run all tests.
+
 Run all tests:
 
 ```sh
