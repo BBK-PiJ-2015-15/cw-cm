@@ -8,7 +8,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 
 /**
  * ContactManagerImpl unit test.
@@ -78,7 +77,7 @@ public class ContactManagerImplTest {
   @Test(expected=IllegalArgumentException.class)
   public void testAddingFutureMeetingWithUnknownContactShouldThrow() {
     // create a mock contact
-    Contact contact = mock(Contact.class);
+    Contact contact = new MockContact();
     
     // create set of contacts
     Set<Contact> contacts = new HashSet<Contact>();
@@ -212,7 +211,7 @@ public class ContactManagerImplTest {
   @Test(expected=IllegalArgumentException.class)
   public void testAddingPastMeetingWithUnknownContactShouldThrow() {
     // create a mock contact
-    Contact contact = mock(Contact.class);
+    Contact contact = new MockContact();
     
     // create set of contacts
     Set<Contact> contacts = new HashSet<Contact>();
@@ -299,7 +298,7 @@ public class ContactManagerImplTest {
   
   @Test(expected=IllegalArgumentException.class)
   public void testGettingPastMeetingListWithUnknownContactShouldThrow() {
-    Contact contact = mock(Contact.class);
+    Contact contact = new MockContact();
     contactManager.getPastMeetingListFor(contact);
   }
   
