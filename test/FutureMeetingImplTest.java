@@ -5,7 +5,6 @@ import java.util.Random;
 import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 
 /**
  * FutureMeetingImpl unit test.
@@ -46,7 +45,7 @@ public class FutureMeetingImplTest {
    * tested in a separate unit test.
    */
   private final Set<Contact> contacts = new HashSet<Contact>(
-    Arrays.asList(mock(Contact.class), mock(Contact.class)));
+    Arrays.asList(new MockContact(), new MockContact()));
   
   /**
    * Creates a new future meeting test.
