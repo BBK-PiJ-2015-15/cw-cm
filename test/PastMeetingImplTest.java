@@ -6,7 +6,6 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 
 /**
  * PastMeetingImpl unit testing.
@@ -48,7 +47,7 @@ public class PastMeetingImplTest {
    * tested in a separate unit test.
    */
   private final Set<Contact> contacts = new HashSet<Contact>(
-    Arrays.asList(mock(Contact.class), mock(Contact.class)));
+    Arrays.asList(new MockContact(), new MockContact()));
   
   /**
    * The past meeting notes.
