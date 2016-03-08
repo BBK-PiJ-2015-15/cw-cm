@@ -63,6 +63,32 @@ public class FutureMeetingImplTest {
     date.add(Calendar.DATE, 7);
   }
   
+  @Test(expected=IllegalArgumentException.class)
+  public void testNewMeetingWithNegativeIdShouldThrow() {
+    FutureMeeting futureMeeting = new FutureMeetingImpl(-1, date, contacts);
+  }
+  
+  @Test(expected=IllegalArgumentException.class)
+  public void testNewMeetingWithZeroIdShouldThrow() {
+    FutureMeeting futureMeeting = new FutureMeetingImpl(0, date, contacts);
+  }
+  
+  @Test(expected=NullPointerException.class)
+  public void testNewMeetingWithNullCalendarShouldThrow() {
+    FutureMeeting futureMeeting = new FutureMeetingImpl(id, null, contacts);
+  }
+  
+  @Test(expected=NullPointerException.class)
+  public void testNewMeetingWithNullContactsShouldThrow() {
+    FutureMeeting futureMeeting = new FutureMeetingImpl(id, date, null);
+  }
+  
+  @Test(expected=IllegalArgumentException.class)
+  public void testNewMeetingWithEmptyContactsShouldThrow() {
+    FutureMeeting futureMeeting = new FutureMeetingImpl(id, date,
+      new HashSet<Contact>());
+  }
+  
   @Test
   public void testNewFutureMeeting() {
     FutureMeeting futureMeeting = new FutureMeetingImpl(id, date, contacts);
