@@ -28,7 +28,6 @@ Script:
 
 JUNIT_JAR="junit-4.12.jar"
 HAMCREST_JAR="hamcrest-core-1.3.jar"
-MOCKITO_JAR="mockito-all-1.10.19.jar"
 
 # compile and run the test(s)
 function run_test {
@@ -38,10 +37,10 @@ function run_test {
     echo "Running $basename..."
 
     # compile
-    javac -cp .:..:$JUNIT_JAR:$MOCKITO_JAR $filename
+    javac -cp .:..:$JUNIT_JAR $filename
 
     # run
-    java -cp .:..:$JUNIT_JAR:$MOCKITO_JAR:$HAMCREST_JAR org.junit.runner.JUnitCore $basename
+    java -cp .:..:$JUNIT_JAR:$HAMCREST_JAR org.junit.runner.JUnitCore $basename
 }
 
 if [ -n "$1" ]; then
