@@ -513,32 +513,43 @@ public class ContactManagerImpl implements ContactManager {
   private void serialisePastMeetings(XMLStreamWriter writer)
     throws XMLStreamException
   {
-    writer.writeStartElement("PastMeetings");
+    writer.writeStartElement("Meetings");
     
-    for (PastMeeting pastMeeting : pastMeetings.values()) {
-      writer.writeStartElement("PastMeeting");
-      writer.writeAttribute("id", Integer.toString(pastMeeting.getId()));
-      
-      Date date = pastMeeting.getDate().getTime();
-      writer.writeStartElement("Date");
-      writer.writeCharacters(DateFormat.getDateInstance().format(date));
-      writer.writeEndElement();
-      
+    for (PastMeeting pastMeeting : pastMeetings.values())
+      serialiseMeeting(writer, pastMeeting);
+    
+    for (FutureMeeting futureMeeting : futureMeetings.values())
+      serialiseMeeting(writer, futureMeeting);
+    
+    writer.writeEndElement();
+  }
+  
+  private void serialiseMeeting(XMLStreamWriter writer, Meeting meeting)
+    throws XMLStreamException
+  {
+    writer.writeStartElement("Meeting");
+    writer.writeAttribute("id", Integer.toString(meeting.getId()));
+    
+    Date date = meeting.getDate().getTime();
+    writer.writeStartElement("Date");
+    writer.writeCharacters(DateFormat.getDateInstance().format(date));
+    writer.writeEndElement();
+    
+    if (meeting instanceof PastMeeting) {
+      PastMeeting pastMeeting = (PastMeeting)meeting;
       writer.writeStartElement("Notes");
       writer.writeCharacters(pastMeeting.getNotes());
       writer.writeEndElement();
-      
-      writer.writeStartElement("ContactsIds");
-      Set<Contact> contacts = pastMeeting.getContacts();
-      for (Contact contact : contacts) {
-        writer.writeStartElement("ContactId");
-        writer.writeCharacters(Integer.toString(contact.getId()));
-        writer.writeEndElement();
-      }
-      writer.writeEndElement();
-      
+    }
+    
+    writer.writeStartElement("Contacts");
+    Set<Contact> contacts = meeting.getContacts();
+    for (Contact contact : contacts) {
+      writer.writeStartElement("Id");
+      writer.writeCharacters(Integer.toString(contact.getId()));
       writer.writeEndElement();
     }
+    writer.writeEndElement();
     
     writer.writeEndElement();
   }
