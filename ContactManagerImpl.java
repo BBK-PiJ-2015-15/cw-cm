@@ -1,7 +1,9 @@
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -480,6 +482,7 @@ public class ContactManagerImpl implements ContactManager {
     writer.writeStartElement("ContactManager");
     
     serialiseContacts(writer);
+    serialisePastMeetings(writer);
     
     writer.writeEndElement();
   }
@@ -499,6 +502,39 @@ public class ContactManagerImpl implements ContactManager {
       
       writer.writeStartElement("Notes");
       writer.writeCharacters(contact.getNotes());
+      writer.writeEndElement();
+      
+      writer.writeEndElement();
+    }
+    
+    writer.writeEndElement();
+  }
+  
+  private void serialisePastMeetings(XMLStreamWriter writer)
+    throws XMLStreamException
+  {
+    writer.writeStartElement("PastMeetings");
+    
+    for (PastMeeting pastMeeting : pastMeetings.values()) {
+      writer.writeStartElement("PastMeeting");
+      writer.writeAttribute("id", Integer.toString(pastMeeting.getId()));
+      
+      Date date = pastMeeting.getDate().getTime();
+      writer.writeStartElement("Date");
+      writer.writeCharacters(DateFormat.getDateInstance().format(date));
+      writer.writeEndElement();
+      
+      writer.writeStartElement("Notes");
+      writer.writeCharacters(pastMeeting.getNotes());
+      writer.writeEndElement();
+      
+      writer.writeStartElement("ContactsIds");
+      Set<Contact> contacts = pastMeeting.getContacts();
+      for (Contact contact : contacts) {
+        writer.writeStartElement("ContactId");
+        writer.writeCharacters(Integer.toString(contact.getId()));
+        writer.writeEndElement();
+      }
       writer.writeEndElement();
       
       writer.writeEndElement();
