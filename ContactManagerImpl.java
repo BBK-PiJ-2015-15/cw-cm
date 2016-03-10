@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -6,6 +8,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Class to manage contacts and meetings.
@@ -35,6 +41,11 @@ public class ContactManagerImpl implements ContactManager {
    * The map of past meetings.
    */
   private TreeMap<Integer, PastMeetingImpl> pastMeetings = new TreeMap<>();
+  
+  /**
+   * The database file.
+   */
+  private File file = new File("contacts.txt");
   
   /**
    * Constructs a new contact manager.
@@ -446,6 +457,53 @@ public class ContactManagerImpl implements ContactManager {
    * closed and when/if the user requests it.
    */
   public void flush() {
+    XMLOutputFactory factory = XMLOutputFactory.newInstance();
+  
+    // Write data as XML to disk
+    try {
+      XMLStreamWriter writer = factory.createXMLStreamWriter(
+        new FileOutputStream(file));
+      
+      writer.writeStartDocument("utf-8", "1.0");
+      serialise(writer);
+      writer.writeEndDocument();
+      
+      writer.flush();
+      writer.close();
+    } catch (Exception e) {
+      // The interface does not specify what to do in case of errors flushing
+      // the data so we ignore them
+    }
+  }
+  
+  private void serialise(XMLStreamWriter writer) throws XMLStreamException {
+    writer.writeStartElement("ContactManager");
     
+    serialiseContacts(writer);
+    
+    writer.writeEndElement();
+  }
+  
+  private void serialiseContacts(XMLStreamWriter writer)
+    throws XMLStreamException
+  {
+    writer.writeStartElement("Contacts");
+    
+    for (Contact contact : contacts.values()) {
+      writer.writeStartElement("Contact");
+      writer.writeAttribute("id", Integer.toString(contact.getId()));
+      
+      writer.writeStartElement("Name");
+      writer.writeCharacters(contact.getName());
+      writer.writeEndElement();
+      
+      writer.writeStartElement("Notes");
+      writer.writeCharacters(contact.getNotes());
+      writer.writeEndElement();
+      
+      writer.writeEndElement();
+    }
+    
+    writer.writeEndElement();
   }
 }
