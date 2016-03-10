@@ -1,3 +1,5 @@
 *.class
 *.jar
 test/run.sh
+test/contacts.txt
+
