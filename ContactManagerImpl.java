@@ -1,6 +1,6 @@
 import java.io.File;
 import java.io.FileOutputStream;
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -530,9 +530,9 @@ public class ContactManagerImpl implements ContactManager {
     writer.writeStartElement("Meeting");
     writer.writeAttribute("id", Integer.toString(meeting.getId()));
     
-    Date date = meeting.getDate().getTime();
+    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     writer.writeStartElement("Date");
-    writer.writeCharacters(DateFormat.getDateInstance().format(date));
+    writer.writeCharacters(formatter.format(meeting.getDate().getTime()));
     writer.writeEndElement();
     
     if (meeting instanceof PastMeeting) {
