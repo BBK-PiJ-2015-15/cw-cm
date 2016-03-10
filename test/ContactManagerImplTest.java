@@ -55,9 +55,6 @@ public class ContactManagerImplTest {
   
   @Before
   public void setUp() {
-    // make sure we start fresh by deleting any previous database file
-    file.delete();
-    
     contactManager = new ContactManagerImpl();
   }
   
@@ -550,6 +547,11 @@ public class ContactManagerImplTest {
   
   @Test
   public void testFlushesToDisk() {
+    // make sure we start fresh by deleting any previous database file
+    file.delete();
+    
+    contactManager = new ContactManagerImpl();
+    
     // add contacts
     contactManager.addNewContact("John Doe", "a note");
     contactManager.addNewContact("Jane Doe", "another note");
