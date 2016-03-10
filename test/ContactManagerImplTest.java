@@ -1,7 +1,9 @@
+import java.io.File;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
@@ -36,6 +38,11 @@ public class ContactManagerImplTest {
    */
   private ContactManagerImpl contactManager;
   
+  /**
+   * The database file.
+   */
+  private File file = new File("contacts.txt");
+  
   public ContactManagerImplTest() {
     presentDate = Calendar.getInstance();
     
@@ -48,6 +55,9 @@ public class ContactManagerImplTest {
   
   @Before
   public void setUp() {
+    // make sure we start fresh by deleting any previous database file
+    file.delete();
+    
     contactManager = new ContactManagerImpl();
   }
   
@@ -536,6 +546,26 @@ public class ContactManagerImplTest {
   @Test(expected=IllegalArgumentException.class)
   public void testAddingMeetingNotesWithUnknownIdShouldThrow() {
     contactManager.addMeetingNotes(1, "meeting notes");
+  }
+  
+  @Test
+  public void testFlushesToDisk() {
+    // add contacts
+    contactManager.addNewContact("John Doe", "a note");
+    contactManager.addNewContact("Jane Doe", "another note");
+    
+    // get all contacts
+    Set<Contact> contacts = contactManager.getContacts("");
+    
+    // add past meeting
+    contactManager.addNewPastMeeting(contacts, pastDate, "meeting notes");
+    
+    // add future meeting
+    contactManager.addFutureMeeting(contacts, futureDate);
+    
+    // assert that the data is flushed to disk
+    contactManager.flush();
+    assertTrue(file.isFile());
   }
   
   // helper methods
