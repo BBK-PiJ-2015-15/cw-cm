@@ -263,7 +263,7 @@ public class ContactManagerImpl implements ContactManager {
    * @throws IllegalArgumentException If the contact does not exist.
    * @throws NullPointerException If the contact is null.
    * @see Contact
-   * @See PastMeeting
+   * @see PastMeeting
    */
   public List<PastMeeting> getPastMeetingListFor(Contact contact) {
     if (contact == null)
@@ -340,6 +340,7 @@ public class ContactManagerImpl implements ContactManager {
    *
    * @param id The meeting ID.
    * @param notes Meeting notes to be added.
+   * @return The past meeting.
    * @throws IllegalArgumentException If the meeting does not exist.
    * @throws IllegalStateException If the meeting is set for a date in the
    *         future.
