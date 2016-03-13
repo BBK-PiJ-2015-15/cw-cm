@@ -60,6 +60,9 @@ public class ContactManagerImplTest {
   
   @Before
   public void setUp() {
+    // make sure we start fresh by deleting any previous database file
+    file.delete();
+    
     contactManager = new ContactManagerImpl();
   }
   
@@ -394,7 +397,7 @@ public class ContactManagerImplTest {
     
     // wait until date is in future
     try {
-      Thread.sleep(1100);
+      Thread.sleep(1200);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
@@ -590,6 +593,23 @@ public class ContactManagerImplTest {
     contactManager = new ContactManagerImpl();
     assertEquals(0, contactManager.getLastMeetingId());
     assertTrue(contactManager.getContacts("").isEmpty());
+  }
+  
+  @Test
+  public void testLoadsFromNonEmptyDatabase() {
+    // copy empty contacts database
+    Path src = Paths.get("valid_contacts.txt");
+    Path dst = Paths.get("contacts.txt");
+    
+    try {
+      Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
+    } catch (Exception e) {
+      fail();
+    }
+    
+    contactManager = new ContactManagerImpl();
+    assertNotEquals(0, contactManager.getLastMeetingId());
+    assertTrue(!contactManager.getContacts("").isEmpty());
   }
   
   // helper methods
