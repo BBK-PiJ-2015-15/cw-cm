@@ -608,8 +608,10 @@ public class ContactManagerImplTest {
     }
     
     contactManager = new ContactManagerImpl();
-    assertNotEquals(0, contactManager.getLastMeetingId());
-    assertTrue(!contactManager.getContacts("").isEmpty());
+    assertEquals(2, contactManager.getLastMeetingId());
+    
+    Set<Contact> contacts = contactManager.getContacts("");
+    assertTrue(!contacts.isEmpty());
   }
   
   // helper methods
