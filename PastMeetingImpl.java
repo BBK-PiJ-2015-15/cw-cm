@@ -25,6 +25,7 @@ public class PastMeetingImpl extends MeetingImpl implements PastMeeting {
    * @throws NullPointerException If the date, the set of contacts or the
    *         notes are null.
    * @throws IllegalArgumentException If the set of contacts is empty.
+   * @see Contact
    */
   public PastMeetingImpl(int id, Calendar date, Set<Contact> contacts,
     String notes)

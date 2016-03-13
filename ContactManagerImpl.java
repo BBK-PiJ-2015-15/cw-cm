@@ -64,7 +64,7 @@ public class ContactManagerImpl implements ContactManager {
   /**
    * Returns the ID of the last added meeting.
    *
-   * @return the last added meeting ID or 0 if there's no meetings
+   * @return The last added meeting ID or 0 if there's no meetings.
    */
   public int getLastMeetingId() {
     return (nextMeetingId - 1);
@@ -76,12 +76,14 @@ public class ContactManagerImpl implements ContactManager {
    * An ID is returned when the meeting is added to the system. This ID will
    * be positive and non-zero.
    *
-   * @param contacts a set of contacts that will participate in the meeting
-   * @param date the date on which the meeting will take place
-   * @return the meeting ID
-   * @throws IllegalArgumentException if the meeting is set for a time
-   *         in the past or if any contact is unknown
-   * @throws NullPointerException if the contacts or date are null
+   * @param contacts A set of contacts that will participate in the meeting.
+   * @param date The date on which the meeting will take place.
+   * @return The meeting ID.
+   * @throws IllegalArgumentException If the meeting is set for a time
+   *         in the past or if any contact is unknown.
+   * @throws NullPointerException If the contacts or date are null.
+   * @see Contact
+   * @see FutureMeeting
    */
   public int addFutureMeeting(Set<Contact> contacts, Calendar date) {
     if (contacts == null || date == null) {
@@ -109,10 +111,11 @@ public class ContactManagerImpl implements ContactManager {
    *
    * The meeting must have happened at a past date.
    *
-   * @param id the meeting ID
-   * @return the meeting with the specified ID or null if there is none
-   * @throws IllegalStateException if there is a meeting with that ID
-   *         happening in the future
+   * @param id The meeting ID.
+   * @return The meeting with the specified ID or null if there is none.
+   * @throws IllegalStateException If there is a meeting with that ID
+   *         happening in the future.
+   * @see PastMeeting
    */
   public PastMeeting getPastMeeting(int id) {
     PastMeeting pastMeeting = pastMeetings.get(id);
@@ -129,10 +132,11 @@ public class ContactManagerImpl implements ContactManager {
    * Returns the future meeting with the specified ID or null if there is
    * none.
    *
-   * @param id the meeting ID
-   * @return the meeting with the specified ID or null if there is none
-   * @throws IllegalArgumentException if there is a meeting with that ID
-   *         happening in the past
+   * @param id The meeting ID.
+   * @return The meeting with the specified ID or null if there is none.
+   * @throws IllegalArgumentException If there is a meeting with that ID
+   *         happening in the past.
+   * @see FutureMeeting
    */
   public FutureMeeting getFutureMeeting(int id) {
     FutureMeeting futureMeeting = futureMeetings.get(id);
@@ -148,8 +152,9 @@ public class ContactManagerImpl implements ContactManager {
   /**
    * Returns the meeting with the specified ID or null if there is none.
    *
-   * @param id the meeting ID
-   * @return the meeting with the requested ID or null if there is none
+   * @param id The meeting ID.
+   * @return The meeting with the requested ID or null if there is none.
+   * @see Meeting
    */
   public Meeting getMeeting(int id) {
     Meeting meeting = futureMeetings.get(id);
@@ -164,11 +169,13 @@ public class ContactManagerImpl implements ContactManager {
    * If there are none, the returned list will be empty. Otherwise, it will be
    * chronologically sorted and will not contain any duplicates.
    *
-   * @param contact the contact
-   * @return a list of future meeting(s) scheduled for this contact (can be
-   *         empty)
-   * @throws IllegalArgumentException if the contact does not exist
-   * @throws NullPointerException if the contact is null
+   * @param contact The contact.
+   * @return A list of future meeting(s) scheduled for this contact (can be
+   *         empty).
+   * @throws IllegalArgumentException If the contact does not exist.
+   * @throws NullPointerException If the contact is null.
+   * @see Contact
+   * @see Meeting
    */
   public List<Meeting> getFutureMeetingList(Contact contact) {
     if (contact == null)
@@ -204,10 +211,11 @@ public class ContactManagerImpl implements ContactManager {
    * If there are none, the returned list will be empty. Otherwise, it will be
    * sorted by id and will not contain any duplicates.
    *
-   * @param date the date
-   * @return a list of meeting(s) schedule for or that took place on the
-   *         specified date (can be empty)
-   * @throws NullPointerException if the date is null
+   * @param date The date.
+   * @return A list of meeting(s) schedule for or that took place on the
+   *         specified date (can be empty).
+   * @throws NullPointerException If the date is null.
+   * @see Meeting
    */
   public List<Meeting> getMeetingListOn(Calendar date) {
     if (date == null)
@@ -248,11 +256,13 @@ public class ContactManagerImpl implements ContactManager {
    * If there are none, the returned list will be empty. Otherwise, it will be
    * chronologically sorted and will not contain any duplicates.
    *
-   * @param contact the contact
-   * @return a list of past meeting(s) in which the contact participated (can
-   *         be empty)
-   * @throws IllegalArgumentException if the contact does not exist
-   * @throws NullPointerException if the contact is null
+   * @param contact The contact.
+   * @return A list of past meeting(s) in which the contact participated (can
+   *         be empty).
+   * @throws IllegalArgumentException If the contact does not exist.
+   * @throws NullPointerException If the contact is null.
+   * @see Contact
+   * @See PastMeeting
    */
   public List<PastMeeting> getPastMeetingListFor(Contact contact) {
     if (contact == null)
@@ -286,12 +296,14 @@ public class ContactManagerImpl implements ContactManager {
   /**
    * Adds a new record for a meeting held in the past.
    *
-   * @param contacts a set of participants
-   * @param date the date on which the meeting took place
-   * @param notes notes to be added about the meeting
-   * @throws IllegalArgumentException if the list of contacts is empty or any
-   *         of the contacts does not exist
-   * @throws NullPointerException if any of the arguments are null
+   * @param contacts A set of participants.
+   * @param date The date on which the meeting took place.
+   * @param notes Notes to be added about the meeting.
+   * @throws IllegalArgumentException If the list of contacts is empty or any
+   *         of the contacts does not exist.
+   * @throws NullPointerException If any of the arguments are null.
+   * @see Contact
+   * @see PastMeeting
    */
   public void addNewPastMeeting(Set<Contact> contacts, Calendar date,
                                 String notes) {
@@ -325,12 +337,14 @@ public class ContactManagerImpl implements ContactManager {
    *
    * It can be also used to add notes to a past meeting at a later date.
    *
-   * @param id the meeting ID
-   * @param notes meeting notes to be added
-   * @throws IllegalArgumentException if the meeting does not exist
-   * @throws IllegalStateException if the meeting is set for a date in the
-   *         future
-   * @throws NullPointerException if the notes is null
+   * @param id The meeting ID.
+   * @param notes Meeting notes to be added.
+   * @throws IllegalArgumentException If the meeting does not exist.
+   * @throws IllegalStateException If the meeting is set for a date in the
+   *         future.
+   * @throws NullPointerException If the notes is null.
+   * @see FutureMeeting
+   * @see PastMeeting
    */
   public PastMeeting addMeetingNotes(int id, String notes) {
     if (notes == null)
@@ -367,12 +381,13 @@ public class ContactManagerImpl implements ContactManager {
   /**
    * Adds a new contact with the specified name and notes.
    *
-   * @param name contact name
-   * @param notes contact notes to be added
-   * @return the contact id
-   * @throws IllegalArgumentException if the name or the notes are empty
-   *         strings
-   * @throws NullPointerException if the name or notes are null
+   * @param name Contact name.
+   * @param notes Contact notes to be added.
+   * @return The contact id.
+   * @throws IllegalArgumentException If the name or the notes are empty
+   *         strings.
+   * @throws NullPointerException If the name or notes are null.
+   * @see Contact
    */
   public int addNewContact(String name, String notes) {
     if (name.isEmpty() || notes.isEmpty())
@@ -394,9 +409,10 @@ public class ContactManagerImpl implements ContactManager {
    * If the specified string is empty, this methods returns the set that
    * contains all contacts.
    *
-   * @param name the search string
-   * @return a list with the contacts whose name contains the specified string
-   * @throws NullPointerException if the name is null
+   * @param name The search string.
+   * @return A list with the contacts whose name contains the specified string.
+   * @throws NullPointerException If the name is null.
+   * @see Contact
    */
   public Set<Contact> getContacts(String name) {
     if (name == null)
@@ -422,10 +438,11 @@ public class ContactManagerImpl implements ContactManager {
    * Note that this method can be used to retrieve just one contact by passing
    * only one ID.
    *
-   * @param ids an arbitrary number of contact IDs
-   * @return a set containing the contacts that correspond to the IDs
-   * @throws IllegalArgumentException if no IDs are provided or if any of the
-   *         provided IDs do not correspond to a real contact
+   * @param ids An arbitrary number of contact IDs.
+   * @return A set containing the contacts that correspond to the IDs.
+   * @throws IllegalArgumentException If no IDs are provided or if any of the
+   *         provided IDs do not correspond to a real contact.
+   * @see Contact
    */
   public Set<Contact> getContacts(int... ids) {
     if (ids == null)
@@ -449,10 +466,11 @@ public class ContactManagerImpl implements ContactManager {
   /**
    * Returns the contact that correspond to the ID.
    *
-   * @param id the contact ID
-   * @return the contact
-   * @throws IllegalArgumentException if the ID does not correspond to a known
-   *         contact
+   * @param id The contact ID.
+   * @return The contact.
+   * @throws IllegalArgumentException If the ID does not correspond to a known
+   *         contact.
+   * @see Contact
    */
   public Contact getContact(int id) {
     Contact contact = contacts.get(id);

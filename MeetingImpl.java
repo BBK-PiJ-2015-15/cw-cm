@@ -33,6 +33,7 @@ public abstract class MeetingImpl implements Meeting {
    * (less than or equal to 0).
    * @throws NullPointerException If the date or the set of contacts are null.
    * @throws IllegalArgumentException If the set of contacts is empty.
+   * @see Contact
    */
   public MeetingImpl(int id, Calendar date, Set<Contact> contacts) {
     if (id <= 0)
@@ -73,6 +74,7 @@ public abstract class MeetingImpl implements Meeting {
    * arbitrary number of them.
    *
    * @return The set of meeting contacts.
+   * @see Contact
    */
   public Set<Contact> getContacts() {
     return contacts;
