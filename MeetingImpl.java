@@ -10,17 +10,17 @@ public abstract class MeetingImpl implements Meeting {
   /**
    * The meeting id.
    */
-  private int id;
+  private final int id;
   
   /**
    * The meeting data.
    */
-  private Calendar date;
+  private final Calendar date;
   
   /**
    * The set of meeting contacts.
    */
-  private Set<Contact> contacts;
+  private final Set<Contact> contacts;
   
   /**
    * Creates a new meeting by passing the meeting id, date and a set of

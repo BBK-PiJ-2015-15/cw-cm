@@ -37,22 +37,23 @@ public class ContactManagerImpl implements ContactManager {
   /**
    * The set of contacts.
    */
-  private TreeMap<Integer, Contact> contacts = new TreeMap<>();
+  private final TreeMap<Integer, Contact> contacts = new TreeMap<>();
   
   /**
    * The map of future meetings.
    */
-  private TreeMap<Integer, FutureMeetingImpl> futureMeetings = new TreeMap<>();
+  private final TreeMap<Integer, FutureMeetingImpl>
+    futureMeetings = new TreeMap<>();
   
   /**
    * The map of past meetings.
    */
-  private TreeMap<Integer, PastMeetingImpl> pastMeetings = new TreeMap<>();
+  private final TreeMap<Integer, PastMeetingImpl> pastMeetings = new TreeMap<>();
   
   /**
    * The database file.
    */
-  private File file = new File("contacts.txt");
+  private final File file = new File("contacts.txt");
   
   /**
    * Constructs a new contact manager.
@@ -500,7 +501,6 @@ public class ContactManagerImpl implements ContactManager {
       writer.writeEndDocument();
       
       writer.flush();
-      writer.close();
     } catch (Exception e) {
       // The interface does not specify what to do in case of errors when
       // flushing the data so we ignore them
@@ -645,16 +645,12 @@ public class ContactManagerImpl implements ContactManager {
       switch (reader.next()) {
         case XMLStreamReader.START_ELEMENT:
           String elementName = reader.getLocalName();
-          if (elementName.equals("Contacts")) {
-            if (!contactsLoaded) {
-              loadContacts(reader);
-              contactsLoaded = true;
-            }
-          } else if (elementName.equals("Meetings")) {
-            if (!meetingsLoaded) {
-              loadMeetings(reader);
-              meetingsLoaded = true;
-            }
+          if (elementName.equals("Contacts") && !contactsLoaded) {
+            loadContacts(reader);
+            contactsLoaded = true;
+          } else if (elementName.equals("Meetings") && !meetingsLoaded) {
+            loadMeetings(reader);
+            meetingsLoaded = true;
           }
           break;
         case XMLStreamReader.END_ELEMENT:
