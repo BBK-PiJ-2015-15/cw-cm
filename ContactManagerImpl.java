@@ -184,7 +184,7 @@ public class ContactManagerImpl implements ContactManager {
     else if (!contacts.containsKey(contact.getId()))
       throw new IllegalArgumentException("contact must not be unknown");
     
-    UpdateMeetings();
+    updateMeetings();
     
     // create a sorted set with a custom comparator than compares the dates
     // of two past meetings
@@ -222,7 +222,7 @@ public class ContactManagerImpl implements ContactManager {
     if (date == null)
       throw new NullPointerException("date must not be null");
     
-    UpdateMeetings();
+    updateMeetings();
     
     // create a sorted set with a custom comparator than compares the IDs
     // of two meetings
@@ -271,7 +271,7 @@ public class ContactManagerImpl implements ContactManager {
     else if (!contacts.containsKey(contact.getId()))
       throw new IllegalArgumentException("contact must not be unknown");
     
-    UpdateMeetings();
+    updateMeetings();
     
     // create a sorted set with a custom comparator than compares the dates
     // of two past meetings
@@ -506,14 +506,18 @@ public class ContactManagerImpl implements ContactManager {
       // flushing the data so we ignore them
     } finally {
       if (writer != null) {
-        try { writer.close(); } catch (Exception e) {}
+        try {
+          writer.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
       }
     }
   }
   
   // Loops thru future meetings looking for meetings that already took place
   // and converts them to past meetings.
-  private void UpdateMeetings() {
+  private void updateMeetings() {
     for (FutureMeeting futureMeeting : futureMeetings.values()) {
       // validate date
       Calendar date = futureMeeting.getDate();
@@ -631,7 +635,11 @@ public class ContactManagerImpl implements ContactManager {
       // loading the data so we ignore them
     } finally {
       if (reader != null) {
-        try { reader.close(); } catch (Exception e) {}
+        try {
+          reader.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
       }
     }
   }
@@ -655,6 +663,8 @@ public class ContactManagerImpl implements ContactManager {
           break;
         case XMLStreamReader.END_ELEMENT:
           break;
+        default:
+          break;
       }
     }
   }
@@ -669,6 +679,8 @@ public class ContactManagerImpl implements ContactManager {
           break;
         case XMLStreamReader.END_ELEMENT:
           return;
+        default:
+          break;
       }
     }
   }
@@ -696,6 +708,8 @@ public class ContactManagerImpl implements ContactManager {
         case XMLStreamReader.END_ELEMENT:
           done = true;
           break;
+        default:
+          break;
       }
     }
     
@@ -722,6 +736,8 @@ public class ContactManagerImpl implements ContactManager {
             loadMeeting(reader);
           break;
         case XMLStreamReader.END_ELEMENT:
+          break;
+        default:
           break;
       }
     }
@@ -753,6 +769,8 @@ public class ContactManagerImpl implements ContactManager {
           break;
         case XMLStreamReader.END_ELEMENT:
           done = true;
+          break;
+        default:
           break;
       }
     }
@@ -789,6 +807,8 @@ public class ContactManagerImpl implements ContactManager {
         case XMLStreamReader.END_ELEMENT:
           done = true;
           break;
+        default:
+          break;
       }
     }
     return result.toString();
@@ -821,6 +841,8 @@ public class ContactManagerImpl implements ContactManager {
         case XMLStreamReader.END_ELEMENT:
           done = true;
           break;
+        default:
+          break;
       }
     }
     return contacts;
@@ -842,6 +864,8 @@ public class ContactManagerImpl implements ContactManager {
           break;
         case XMLStreamReader.END_ELEMENT:
           done = true;
+          break;
+        default:
           break;
       }
     }
