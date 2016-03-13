@@ -1,4 +1,8 @@
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -389,7 +394,7 @@ public class ContactManagerImplTest {
     
     // wait until date is in future
     try {
-      Thread.sleep(1000);
+      Thread.sleep(1100);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
@@ -568,6 +573,23 @@ public class ContactManagerImplTest {
     // assert that the data is flushed to disk
     contactManager.flush();
     assertTrue(file.isFile());
+  }
+  
+  @Test
+  public void testLoadsFromEmptyDatabase() {
+    // copy empty contacts database
+    Path src = Paths.get("empty_contacts.txt");
+    Path dst = Paths.get("contacts.txt");
+    
+    try {
+      Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
+    } catch (Exception e) {
+      fail();
+    }
+    
+    contactManager = new ContactManagerImpl();
+    assertEquals(0, contactManager.getLastMeetingId());
+    assertTrue(contactManager.getContacts("").isEmpty());
   }
   
   // helper methods
