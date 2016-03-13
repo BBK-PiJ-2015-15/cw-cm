@@ -89,7 +89,7 @@ public abstract class MeetingImpl implements Meeting {
     if (object instanceof MeetingImpl) {
       MeetingImpl meeting = (MeetingImpl)object;
       return (this.date.equals(meeting.date) &&
-              this.contacts.equals(meeting.contacts));
+        this.contacts.equals(meeting.contacts));
     }
     return false;
   }
