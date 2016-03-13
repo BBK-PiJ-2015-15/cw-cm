@@ -512,8 +512,7 @@ public class ContactManagerImplTest {
     
     // add future meeting for first and second contacts
     Set<Contact> contacts = contactManager.getContacts(ids[0], ids[1]);
-    int firstMeetingId = contactManager.addFutureMeeting(contacts,
-                                                         futureDate);
+    int firstMeetingId = contactManager.addFutureMeeting(contacts, futureDate);
     
     // add duplicate
     contactManager.addFutureMeeting(contacts, futureDate);

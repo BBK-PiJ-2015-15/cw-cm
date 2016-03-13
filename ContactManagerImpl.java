@@ -176,6 +176,8 @@ public class ContactManagerImpl implements ContactManager {
     else if (!contacts.containsKey(contact.getId()))
       throw new IllegalArgumentException("contact must not be unknown");
     
+    UpdateMeetings();
+    
     // create a sorted set with a custom comparator than compares the dates
     // of two past meetings
     // by using a set we also remove duplicates
@@ -210,6 +212,8 @@ public class ContactManagerImpl implements ContactManager {
   public List<Meeting> getMeetingListOn(Calendar date) {
     if (date == null)
       throw new NullPointerException("date must not be null");
+    
+    UpdateMeetings();
     
     // create a sorted set with a custom comparator than compares the IDs
     // of two meetings
@@ -255,6 +259,8 @@ public class ContactManagerImpl implements ContactManager {
       throw new NullPointerException("contact must not be null");
     else if (!contacts.containsKey(contact.getId()))
       throw new IllegalArgumentException("contact must not be unknown");
+    
+    UpdateMeetings();
     
     // create a sorted set with a custom comparator than compares the dates
     // of two past meetings
@@ -484,6 +490,28 @@ public class ContactManagerImpl implements ContactManager {
       if (writer != null) {
         try { writer.close(); } catch (Exception e) {}
       }
+    }
+  }
+  
+  // Loops thru future meetings looking for meetings that already took place
+  // and converts them to past meetings.
+  private void UpdateMeetings() {
+    for (FutureMeeting futureMeeting : futureMeetings.values()) {
+      // validate date
+      Calendar date = futureMeeting.getDate();
+      if (date.compareTo(Calendar.getInstance()) >= 0)
+        continue;
+      
+      // remove from future meetings
+      int id = futureMeeting.getId();
+      futureMeetings.remove(id);
+      
+      // create past meeting
+      PastMeetingImpl pastMeeting = new PastMeetingImpl(id,
+        futureMeeting.getDate(), futureMeeting.getContacts(), "");
+      
+      // add meeting to map
+      pastMeetings.put(id, pastMeeting);
     }
   }
   
