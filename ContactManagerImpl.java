@@ -1,5 +1,7 @@
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.lang.StringBuilder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -8,11 +10,14 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
@@ -53,7 +58,7 @@ public class ContactManagerImpl implements ContactManager {
    * Constructs a new contact manager.
    */
   public ContactManagerImpl() {
-    
+    load();
   }
   
   /**
@@ -460,11 +465,11 @@ public class ContactManagerImpl implements ContactManager {
    */
   public void flush() {
     XMLOutputFactory factory = XMLOutputFactory.newInstance();
-  
+    XMLStreamWriter writer = null;
+    
     // Write data as XML to disk
     try {
-      XMLStreamWriter writer = factory.createXMLStreamWriter(
-        new FileOutputStream(file));
+      writer = factory.createXMLStreamWriter(new FileOutputStream(file));
       
       writer.writeStartDocument("utf-8", "1.0");
       serialise(writer);
@@ -473,20 +478,26 @@ public class ContactManagerImpl implements ContactManager {
       writer.flush();
       writer.close();
     } catch (Exception e) {
-      // The interface does not specify what to do in case of errors flushing
-      // the data so we ignore them
+      // The interface does not specify what to do in case of errors when
+      // flushing the data so we ignore them
+    } finally {
+      if (writer != null) {
+        try { writer.close(); } catch (Exception e) {}
+      }
     }
   }
   
+  // Serialises the contact manager data as XML.
   private void serialise(XMLStreamWriter writer) throws XMLStreamException {
     writer.writeStartElement("ContactManager");
     
     serialiseContacts(writer);
-    serialisePastMeetings(writer);
+    serialiseMeetings(writer);
     
     writer.writeEndElement();
   }
   
+  // Serialises the contacts.
   private void serialiseContacts(XMLStreamWriter writer)
     throws XMLStreamException
   {
@@ -510,7 +521,8 @@ public class ContactManagerImpl implements ContactManager {
     writer.writeEndElement();
   }
   
-  private void serialisePastMeetings(XMLStreamWriter writer)
+  // Serialises the meetings.
+  private void serialiseMeetings(XMLStreamWriter writer)
     throws XMLStreamException
   {
     writer.writeStartElement("Meetings");
@@ -524,6 +536,7 @@ public class ContactManagerImpl implements ContactManager {
     writer.writeEndElement();
   }
   
+  // Serialises a meeting.
   private void serialiseMeeting(XMLStreamWriter writer, Meeting meeting)
     throws XMLStreamException
   {
@@ -552,5 +565,252 @@ public class ContactManagerImpl implements ContactManager {
     writer.writeEndElement();
     
     writer.writeEndElement();
+  }
+  
+  // Loads the contact manager data from XML.
+  private void load() {
+    XMLInputFactory factory = XMLInputFactory.newInstance();
+    XMLStreamReader reader = null;
+    
+    // Write data as XML to disk
+    try {
+      reader = factory.createXMLStreamReader(new FileInputStream(file));
+      
+      // Skip start of document and validate root object
+      reader.next();
+      if (reader.getLocalName().equals("ContactManager"))
+        loadDocument(reader);
+    } catch (Exception e) {
+      // The interface does not specify what to do in case of errors when
+      // loading the data so we ignore them
+    } finally {
+      if (reader != null) {
+        try { reader.close(); } catch (Exception e) {}
+      }
+    }
+  }
+  
+  // Loads the contacts and meetings.
+  private void loadDocument(XMLStreamReader reader) throws XMLStreamException {
+    boolean contactsLoaded = false;
+    boolean meetingsLoaded = false;
+    
+    while (reader.hasNext()) {
+      switch (reader.next()) {
+        case XMLStreamReader.START_ELEMENT:
+          String elementName = reader.getLocalName();
+          if (elementName.equals("Contacts")) {
+            if (!contactsLoaded) {
+              loadContacts(reader);
+              contactsLoaded = true;
+            }
+          } else if (elementName.equals("Meetings")) {
+            if (!meetingsLoaded) {
+              loadMeetings(reader);
+              meetingsLoaded = true;
+            }
+          }
+          break;
+        case XMLStreamReader.END_ELEMENT:
+          break;
+      }
+    }
+  }
+  
+  private void loadContacts(XMLStreamReader reader) throws XMLStreamException {
+    while (reader.hasNext()) {
+      switch (reader.next()) {
+        case XMLStreamReader.START_ELEMENT:
+          String name = reader.getLocalName();
+          if (name.equals("Contact"))
+            loadContact(reader);
+          break;
+        case XMLStreamReader.END_ELEMENT:
+          return;
+      }
+    }
+  }
+  
+  private void loadContact(XMLStreamReader reader) throws XMLStreamException {
+    String name = null, notes = null;
+    int id = -1;
+    
+    try {
+      id = Integer.parseInt(reader.getAttributeValue(null, "id"));
+    } catch (Exception e) {
+      return;
+    }
+    
+    boolean done = false;
+    while (!done && reader.hasNext()) {
+      switch (reader.next()) {
+        case XMLStreamReader.START_ELEMENT:
+          String elementName = reader.getLocalName();
+          if (elementName.equals("Name") && name == null)
+            name = readText(reader);
+          else if (elementName.equals("Notes") && notes == null)
+            notes = readText(reader);
+          break;
+        case XMLStreamReader.END_ELEMENT:
+          done = true;
+          break;
+      }
+    }
+    
+    if (id > 0 && name != null) {
+      if (notes == null)
+        notes = "";
+      
+      // Add contact
+      contacts.put(id, new ContactImpl(id, name, notes));
+      
+      // Update next contact id
+      id++;
+      if (id > nextContactId)
+        nextContactId = id;
+    }
+  }
+  
+  private void loadMeetings(XMLStreamReader reader) throws XMLStreamException {
+    while (reader.hasNext()) {
+      switch (reader.next()) {
+        case XMLStreamReader.START_ELEMENT:
+          String name = reader.getLocalName();
+          if (name.equals("Meeting"))
+            loadMeeting(reader);
+          break;
+        case XMLStreamReader.END_ELEMENT:
+          break;
+      }
+    }
+  }
+  
+  private void loadMeeting(XMLStreamReader reader) throws XMLStreamException {
+    Set<Contact> contacts = null;
+    Calendar date = null;
+    String notes = null;
+    int id = -1;
+    
+    try {
+      id = Integer.parseInt(reader.getAttributeValue(null, "id"));
+    } catch (Exception e) {
+      return;
+    }
+    
+    boolean done = false;
+    while (!done && reader.hasNext()) {
+      switch (reader.next()) {
+        case XMLStreamReader.START_ELEMENT:
+          String elementName = reader.getLocalName();
+          if (elementName.equals("Date") && date == null)
+            date = readDate(reader);
+          else if (elementName.equals("Notes") && notes == null)
+            notes = readText(reader);
+          else if (elementName.equals("Contacts") && contacts == null)
+            contacts = readMeetingContacts(reader);
+          break;
+        case XMLStreamReader.END_ELEMENT:
+          done = true;
+          break;
+      }
+    }
+    
+    if (id > 0 && date != null && contacts != null && !contacts.isEmpty()) {
+      if (notes == null)
+        notes = "";
+      
+      if (date.before(Calendar.getInstance())) {
+        // Add past meeting
+        pastMeetings.put(id, new PastMeetingImpl(id, date, contacts, notes));
+      } else {
+        // Add future meeting
+        futureMeetings.put(id, new FutureMeetingImpl(id, date, contacts));
+      }
+      
+      // Update next meeting id
+      id++;
+      if (id > nextMeetingId)
+        nextMeetingId = id;
+    }
+  }
+  
+  // Reads element characters.
+  private String readText(XMLStreamReader reader) throws XMLStreamException {
+    StringBuilder result = new StringBuilder();
+    boolean done = false;
+    
+    while (!done && reader.hasNext()) {
+      switch (reader.next()) {
+        case XMLStreamReader.CHARACTERS:
+          result.append(reader.getText());
+          break;
+        case XMLStreamReader.END_ELEMENT:
+          done = true;
+          break;
+      }
+    }
+    return result.toString();
+  }
+  
+  // Reads element as Calendar.
+  private Calendar readDate(XMLStreamReader reader) throws XMLStreamException {
+    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    try {
+      Calendar date = Calendar.getInstance();
+      date.setTime(formatter.parse(readText(reader)));
+      return date;
+    } catch (Exception e) {
+      return null;
+    }
+  }
+  
+  // Reads the set of contacts for a meeting.
+  private Set<Contact> readMeetingContacts(XMLStreamReader reader)
+    throws XMLStreamException
+  {
+    Set<Contact> contacts = new HashSet<>();
+    
+    boolean done = false;
+    while (!done && reader.hasNext()) {
+      switch (reader.next()) {
+        case XMLStreamReader.CHARACTERS:
+          contacts.add(readMeetingContact(reader));
+          break;
+        case XMLStreamReader.END_ELEMENT:
+          done = true;
+          break;
+      }
+    }
+    return contacts;
+  }
+  
+  // Reads one contact in a meeting.
+  private Contact readMeetingContact(XMLStreamReader reader)
+    throws XMLStreamException
+  {
+    String string = null;
+  
+    boolean done = false;
+    while (!done && reader.hasNext()) {
+      switch (reader.next()) {
+        case XMLStreamReader.START_ELEMENT:
+          String elementName = reader.getLocalName();
+          if (elementName.equals("Id"))
+            string = readText(reader);
+          break;
+        case XMLStreamReader.END_ELEMENT:
+          done = true;
+          break;
+      }
+    }
+    
+    if (string != null) {
+      try {
+        int id = Integer.parseInt(reader.getAttributeValue(null, "id"));
+        return contacts.get(id);
+      } catch (Exception e) {
+      }
+    }
+    return null;
   }
 }
